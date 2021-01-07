@@ -45,7 +45,7 @@ const PageTemplate: FC = ({ children }) => {
           login({ appState: { returnTo: { pathname, query } } });
         }}
         logoutClick={() => {
-          logout({ returnTo: 'http://simlab.resuscitate.io' });
+          logout({ returnTo: process.env.ROOT_URL ?? 'http://localhost:3000' });
         }}
       />
       <Container fluid>{children}</Container>
@@ -78,7 +78,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Auth0Provider
         domain="resusio.us.auth0.com"
         clientId="iQSuKM0cu8NBtyaU50oqcH7eyPU3KBVE"
-        redirectUri="http://simlab.resuscitate.io"
+        redirectUri={process.env.ROOT_URL ?? 'http://localhost:3000'}
         onRedirectCallback={(appState) => {
           if (appState?.returnTo) {
             Router.push({
