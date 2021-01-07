@@ -1,0 +1,74 @@
+@import '~nord/src/sass/nord.scss';
+
+.normal {
+  color: $nord14;
+}
+
+.high {
+  color: $nord11;
+}
+
+.low {
+  color: $nord10;
+}
+
+.abnormal {
+  color: $nord11;
+}
+
+.critHigh {
+  color: darken($nord11, 10%);
+}
+
+.critLow {
+  color: darken($nord10, 10%);
+}
+
+.normalRow {
+}
+
+tr.highRow td {
+  background-color: lighten($nord11, 30%);
+}
+
+tr.lowRow td {
+  background-color: lighten($nord10, 30%);
+}
+
+tr.abnormalRow td {
+  background-color: lighten($nord11, 30%);
+}
+
+tr.critHighRow td {
+  background-color: lighten($nord11, 10%);
+}
+
+tr.critLowRow td {
+  background-color: lighten($nord10, 10%);
+}
+
+.valueControl {
+  padding: 0 0;
+}
+
+.unlocked {
+  &:hover {
+    color: $nord11;
+  }
+}
+
+.locked {
+  color: $nord11;
+  &:hover {
+    color: lighten($nord11, 10%);
+  }
+}
+
+.lockCol {
+  width: 2rem;
+}
+
+.invalid {
+  background-color: lighten($nord11, 20%);
+  color: $nord11;
+}
