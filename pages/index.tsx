@@ -23,6 +23,7 @@ function FrontPage() {
           <small className="text-muted">
             Create mock lab reports on-the-fly for medical simulation.
           </small>
+          <pre>{process.env.NEXT_PUBLIC_ROOT_URL ?? "tester"}</pre>
         </h3>
         <p className="mt-4">
           <Button variant="primary">Start a Lab Report</Button>

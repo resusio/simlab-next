@@ -48,6 +48,7 @@ const PageTemplate: FC = ({ children }) => {
           logout({ returnTo: process.env.NEXT_PUBLIC_ROOT_URL ?? 'http://localhost:3000' });
         }}
       />
+      <pre>{process.env.NEXT_PUBLIC_ROOT_URL ?? "test3"}</pre>
       <Container fluid>{children}</Container>
       {/*      <div className="d-block d-sm-none">xs</div>
       <div className="d-none d-sm-block d-md-none">sm</div>
@@ -92,6 +93,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <SettingsProvider>
             <SimlabProvider>
               <PageTemplate>
+                {process.env.NEXT_PUBLIC_ROOT_URL ?? "test2"}
                 <Component {...pageProps} />
               </PageTemplate>
             </SimlabProvider>
