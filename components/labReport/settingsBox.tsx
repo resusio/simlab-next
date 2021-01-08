@@ -61,7 +61,7 @@ const SettingsBox: FC<SettingsBoxType> = ({ settings, diseaseList }) => (
           {settings.diseaseIds.map((diseaseId) => {
             const disease = diseaseList.find((diseaseToTest) => diseaseToTest.id === diseaseId);
 
-            return <div>{disease?.nomenclature.short}</div>;
+            return <div key={diseaseId}>{disease?.nomenclature.short}</div>;
           })}
         </em>
       </Col>
