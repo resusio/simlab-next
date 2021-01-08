@@ -1,13 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 
 import Form from 'react-bootstrap/Form';
-import { Lock, LockFill } from 'react-bootstrap-icons';
+import { Lock, LockFill, Calculator, Unlock } from 'react-bootstrap-icons';
 
 import {
   testResultFlag,
   testResultWithMetadataType,
 } from '@resusio/simlab/dist/types/labReportTypes';
-import { labTestType, testResultType } from '@resusio/simlab/dist/types/labTestTypes';
+import { labTestGenerateMethod, testResultType } from '@resusio/simlab';
 
 import styles from './testResultRow.module.scss';
 
@@ -109,7 +109,10 @@ const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggle
       <td>{testResult.nomenclature.short}</td>
       <td width={100}>{valueControl}</td>
       <td dangerouslySetInnerHTML={{ __html: testResult.display.unitDisplay }} />
-      <td className={flagTextStyle}>{testResult.display.flag}</td>
+      <td className={`${styles.flagCol} ${flagTextStyle}`}>{testResult.display.flag}</td>
+      <td className={`${styles.calcCol} d-print-none`}>
+        {testResult.generatedType === labTestGenerateMethod.DERIVED ? <Calculator /> : ''}
+      </td>
       <td
         className={`${styles.lockCol} d-print-none`}
         onClick={() => {
@@ -117,7 +120,7 @@ const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggle
           toggleLocked(!isLocked);
         }}
       >
-        {isLocked ? <LockFill className={styles.locked} /> : <Lock className={styles.unlocked} />}
+        {isLocked ? <LockFill className={styles.locked} /> : <Unlock className={styles.unlocked} />}
       </td>
     </tr>
   );

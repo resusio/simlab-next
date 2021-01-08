@@ -33,7 +33,7 @@ const TestResultTable: FC<TestResultTableProps> = ({ results, setResults }) => {
         <Fragment key={category.name}>
           <thead className="thead-dark">
             <tr>
-              <th colSpan={5}>{category.name || 'Miscellaneous'}</th>
+              <th colSpan={6}>{category.name || 'Miscellaneous'}</th>
             </tr>
           </thead>
           <tbody>

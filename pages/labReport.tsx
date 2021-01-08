@@ -23,7 +23,7 @@ function isNumeric(str: any) {
     !isNaN(parseFloat(str))
   ); // ...and ensure strings of whitespace fail
 }
-
+// TODO: show box with brief version of current settings, above Report Settings button
 const LabReport = () => {
   const [results, setResults] = useState<fullTestResultType>({
     categories: [],

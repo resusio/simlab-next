@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import { FC, Dispatch, SetStateAction } from 'react'; // Types
+import { FC } from 'react'; // Types
 
 import { SettingsContext } from './settingsContext';
 
