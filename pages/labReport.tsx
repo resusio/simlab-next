@@ -7,14 +7,16 @@ import { SimlabContext } from '../contexts/simlabContext';
 
 import TestResultTable from '../components/labReport/testResultTable';
 import SettingsModal from '../components/labReport/settingsModal';
+import SettingsBox from '../components/labReport/settingsBox';
 
-import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import { fullTestResultType } from '@resusio/simlab';
+
+import styles from '../styles/labReport.module.scss';
 
 function isNumeric(str: any) {
   if (typeof str != 'string') return false; // we only process strings!
@@ -76,33 +78,47 @@ const LabReport = () => {
           xl={2}
           className="d-print-none"
         >
-          <div>
-            <Button
-              variant="danger"
-              block
-              onClick={() => {
-                simlab.generateLabReport();
-                const labResults = simlab.fetchLabReport();
-                setResults(labResults);
-              }}
-            >
-              Generate New Report
-            </Button>
+          <Button
+            variant="danger"
+            block
+            onClick={() => {
+              simlab.generateLabReport();
+              const labResults = simlab.fetchLabReport();
+              setResults(labResults);
+            }}
+          >
+            Generate New Report
+          </Button>
 
-            <Button variant="info" block onClick={() => setShowSettings(!showSettings)}>
-              Report Settings...
+          <SettingsBox settings={settings} diseaseList={simlab.getAllDiseases()} />
+          <Button
+            variant="info"
+            block
+            className={styles.settingsButton}
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            Report Settings...
+          </Button>
+
+          <ButtonGroup vertical className="d-print-none mt-4 mb-4 w-100">
+            <Button variant="success" disabled block>
+              Save Report...
             </Button>
-          </div>
-          <div>
-            <ButtonGroup vertical className="d-print-none mt-4 mb-4" style={{ width: '100%' }}>
-              <Button variant="success" disabled block>
-                Save Report...
-              </Button>
-              <Button variant="success" disabled block>
-                Load Report...
-              </Button>
-            </ButtonGroup>
-          </div>
+            <Button variant="success" disabled block>
+              Load Report...
+            </Button>
+            <Button
+              variant="success"
+              block
+              onClick={() =>
+                setTimeout(function () {
+                  window.print();
+                }, 0)
+              }
+            >
+              <b>Print Report</b>
+            </Button>
+          </ButtonGroup>
         </Col>
       </Row>
     </>

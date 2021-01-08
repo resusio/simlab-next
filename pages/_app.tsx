@@ -48,7 +48,9 @@ const PageTemplate: FC = ({ children }) => {
           logout({ returnTo: process.env.NEXT_PUBLIC_ROOT_URL ?? 'http://localhost:3000' });
         }}
       />
-      <Container fluid>{children}</Container>
+      <Container fluid className="pt-2">
+        {children}
+      </Container>
       {/*      <div className="d-block d-sm-none">xs</div>
       <div className="d-none d-sm-block d-md-none">sm</div>
       <div className="d-none d-md-block d-lg-none">md</div>
