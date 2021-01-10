@@ -37,10 +37,13 @@ const LabReport = () => {
   const { simlab } = useContext(SimlabContext);
 
   useEffect(() => {
-    const labResults = simlab.fetchLabReport();
+    let labResults = simlab.fetchLabReport();
 
-    // TODO: Decide, if simlab has no results in it, generate an initial set or show the settings dialog.
-    // Probable should just show results for a healthy generic patient, basic labs
+    // If simlab has no results in it, generate an initial set and display
+    if (_.keys(labResults.tests).length === 0) {
+      simlab.generateLabReport();
+      labResults = simlab.fetchLabReport();
+    }
 
     setResults(labResults);
   }, []);
