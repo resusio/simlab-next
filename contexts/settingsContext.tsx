@@ -15,17 +15,17 @@ export interface SettingsContextType {
   setSettings: Dispatch<SetStateAction<SettingsType>>;
 }
 
-const defaultSettings = {
+export const defaultSettings = {
   patient: {
     name: 'John Smith',
     mrn: '1234-567-890',
     age: 45,
     weight: 70,
     height: 170,
-    gender: gender.Male,
+    gender: gender.Female,
   },
   testIds: ['hstnt'],
-  orderSetIds: ['basic', 'abg'],
+  orderSetIds: ['udip'],
   diseaseIds: ['endo.dka'],
 };
 

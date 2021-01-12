@@ -1,6 +1,8 @@
 import { FC, Fragment, useContext } from 'react';
 import _ from 'underscore';
 
+import isNumeric from '../../utils/isNumeric';
+
 import Table from 'react-bootstrap/Table';
 
 import { fullTestResultType } from '@resusio/simlab';
@@ -13,15 +15,6 @@ import styles from './testResultTable.module.scss';
 export interface TestResultTableProps {
   results: fullTestResultType;
   setResults: (newResults: fullTestResultType) => void;
-}
-
-//TODO: abstract this into a separate file.
-function isNumeric(str: any) {
-  if (typeof str != 'string') return false; // we only process strings!
-  return (
-    !isNaN((str as unknown) as number) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-    !isNaN(parseFloat(str))
-  ); // ...and ensure strings of whitespace fail
 }
 
 const TestResultTable: FC<TestResultTableProps> = ({ results, setResults }) => {
@@ -42,12 +35,9 @@ const TestResultTable: FC<TestResultTableProps> = ({ results, setResults }) => {
                 key={testId}
                 testResult={results.tests[testId]}
                 updateValue={(newValue) => {
-                  const typedNewValue = isNumeric(newValue)
-                    ? Number.parseFloat(newValue.toString())
-                    : newValue;
                   // TODO: when updating, need to convert out of current units to base units, so that
                   // derived units calculate correctly
-                  const newResults = simlab.updateAndFetchSingleTest(testId, typedNewValue);
+                  const newResults = simlab.updateAndFetchSingleTest(testId, newValue);
                   const combinedTests = _.extend({}, results.tests, newResults.tests);
 
                   setResults({

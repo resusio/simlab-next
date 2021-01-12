@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useContext } from 'react';
 import { FC } from 'react'; // Types
 
-import { SettingsContext } from './settingsContext';
+import { SettingsContext, defaultSettings } from './settingsContext';
 
 import LabReportGenerator from '@resusio/simlab';
 import simlabSetBasic from '@resusio/simlab-set-basic';
@@ -17,12 +17,18 @@ export const SimlabContext = createContext<SimlabContextType>({
 export const SimlabProvider: FC = ({ children }) => {
   const { settings } = useContext(SettingsContext);
   const [simlab] = useState<LabReportGenerator>(
-    new LabReportGenerator([], [], undefined, [], {
-      labTests: simlabSetBasic.labTests,
-      orderSets: simlabSetBasic.orderSets,
-      categories: simlabSetBasic.categories,
-      diseases: simlabSetBasic.diseases,
-    })
+    new LabReportGenerator(
+      defaultSettings.testIds,
+      defaultSettings.orderSetIds,
+      defaultSettings.patient,
+      defaultSettings.diseaseIds,
+      {
+        labTests: simlabSetBasic.labTests,
+        orderSets: simlabSetBasic.orderSets,
+        categories: simlabSetBasic.categories,
+        diseases: simlabSetBasic.diseases,
+      }
+    )
   );
 
   // effect to set new simlab settings

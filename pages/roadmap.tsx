@@ -48,6 +48,19 @@ const RoadmapPage = () => {
           <Done /> Allow re-generation of lab results at the click of a button
         </li>
         <li>
+          <Done /> Allow locking of values that have been edited so that they don't get regenerated
+        </li>
+        <li>
+          <Done /> Prevent calculated values from being updated directly, instead update as
+          dependencies are changed
+        </li>
+        <li>
+          <InProgress /> Save sets of labs to user account
+        </li>
+        <li>
+          <InProgress /> ABG calculator (improve manner in which tests are modified by diseases)
+        </li>
+        <li>
           <NotStarted /> Persist settings/labs requested across page refresh
         </li>
         <li>
@@ -57,20 +70,10 @@ const RoadmapPage = () => {
           <NotStarted /> Settings menu (e.g. long vs. short name, etc.)
         </li>
         <li>
-          <Done /> Allow locking of values that have been edited so that they don't get regenerated
-        </li>
-        <li>
           <NotStarted /> Export PDF, DOCX, XLSX
         </li>
         <li>
-          <Done /> Prevent calculated values from being updated directly, instead update as
-          dependencies are changed
-        </li>
-        <li>
-          <NotStarted /> Save sets of labs to user account
-        </li>
-        <li>
-          <InProgress /> ABG calculator (improve manner in which tests are modified by diseases)
+          <NotStarted /> Feedback/contact form
         </li>
       </ul>
     </>

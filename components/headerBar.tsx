@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -26,18 +27,20 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = ({
   username,
   email,
 }: HeaderBarProps) => {
+  const router = useRouter();
+
   const ProfilePicture = (
     <img style={{ height: '2rem' }} className="rounded-circle border" src={avatarPicture} />
   );
 
   return (
     <Navbar bg="secondary" variant="dark" expand="lg" sticky="top">
-      <Navbar.Brand href="#home">
-        <img src="logo.svg" style={{ height: '2rem', width: 'auto' }} />
+      <Navbar.Brand href="https://www.resuscitate.io">
+        <img src="/logo.svg" style={{ height: '2rem', width: 'auto' }} />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
+        <Nav className="mr-auto" activeKey={'/' + router.pathname.split('/')[1]}>
           <Link href="/" passHref>
             <Nav.Link>Home</Nav.Link>
           </Link>

@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 
+import isNumeric from '../../utils/isNumeric';
+
 import Form from 'react-bootstrap/Form';
 import { Lock, LockFill, Calculator, Unlock } from 'react-bootstrap-icons';
 
@@ -10,14 +12,6 @@ import {
 import { labTestGenerateMethod, testResultType } from '@resusio/simlab';
 
 import styles from './testResultRow.module.scss';
-
-function isNumeric(str: any) {
-  if (typeof str != 'string') return false; // we only process strings!
-  return (
-    !isNaN((str as unknown) as number) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-    !isNaN(parseFloat(str))
-  ); // ...and ensure strings of whitespace fail
-}
 
 function TestValueToString(test: testResultWithMetadataType) {
   return test.valueType === 'number'
@@ -45,10 +39,10 @@ const rowFlagStyles = {
 
 export interface TestResultRowProps {
   testResult: testResultWithMetadataType;
-  updateValue: (newValue: testResultType) => void; // TODO: change this so that this component parses into a string or number
+  updateValue: (newValue: testResultType) => void;
   toggleLocked: (isLocked: boolean) => void;
 }
-//TODO: Make a validate function combined with format for each test
+
 const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggleLocked }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -85,7 +79,9 @@ const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggle
           (e.target as HTMLInputElement).blur();
         } else if (e.key === 'Enter') {
           if (isValid) {
-            updateValue(value);
+            const typedValue = isNumeric(value) ? Number.parseFloat(value.toString()) : value;
+
+            updateValue(typedValue);
             (e.target as HTMLInputElement).blur();
           }
         }
