@@ -12,6 +12,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req?.query?.userId && typeof req.query.userId === 'string') {
       const userId = req.query.userId;
 
+      console.log(`userId: ${userId}, mongourl: ${process.env.MONGODB_URL}`);
+
       await dbConnect();
 
       const dbResult = await SavedReportDocumentModel.find({ userId }).exec();
