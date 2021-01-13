@@ -7,7 +7,7 @@ import styles from './tag.module.scss';
 
 interface TagProps {
   onRemoveClicked?: (tag: string) => void;
-  showClose: boolean;
+  showClose?: boolean;
   value: string;
 }
 

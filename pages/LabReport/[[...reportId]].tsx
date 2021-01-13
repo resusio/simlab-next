@@ -12,6 +12,7 @@ import { useSavedReport, saveNewReport } from '../../utils/apiHooks';
 import TestResultTable from '../../components/labReport/TestResultTable';
 import SettingsModal from '../../components/labReport/SettingsModal';
 import SettingsBox from '../../components/labReport/SettingsBox';
+import SaveModal, { SaveSettingsType } from '../../components/labReport/SaveModal';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -22,7 +23,6 @@ import { Share } from 'react-bootstrap-icons';
 import { fullTestResultType } from '@resusio/simlab';
 
 import styles from '../../styles/labReport.module.scss';
-import { SavedReportType } from '../../models/savedReport.model';
 
 const LabReport = () => {
   const [results, setResults] = useState<fullTestResultType>({
@@ -30,6 +30,7 @@ const LabReport = () => {
     tests: {},
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const [loadedReportId, setLoadedReportId] = useState<string | null>(null);
 
   const { user } = useContext(UserContext);
@@ -86,16 +87,15 @@ const LabReport = () => {
   }, [loadedReport]);
 
   // Save report handler
-  // TODO: dire need of a save dialog
-  const saveReport = async () => {
+  const saveReport = async (saveSettings: SaveSettingsType) => {
     if (user && user.userId) {
       const serializedReport = simlab.serializeReport();
       const newReport = {
         userId: user.userId,
         authorName: `${user.firstName} ${user.lastName}`,
-        isPublic: true,
-        reportName: 'Test',
-        tags: ['tag'],
+        isPublic: saveSettings.isPublic,
+        reportName: saveSettings.reportName,
+        tags: saveSettings.tags,
         ...serializedReport,
 
         patient: {
@@ -106,9 +106,9 @@ const LabReport = () => {
         },
       };
 
-      // TODO: Indicate save successful
-      const result = await saveNewReport(newReport);
+      return await saveNewReport(newReport);
     }
+    return false; // Save failed as no user currently logged in (should not occur)
   };
 
   // TODO: better formatting
@@ -126,6 +126,18 @@ const LabReport = () => {
         <SettingsModal
           onCancel={() => setShowSettings(false)}
           onSave={(newSettings) => setShowSettings(false)}
+        />
+      ) : null}
+
+      {showSaveModal ? (
+        <SaveModal
+          onCancel={() => setShowSaveModal(false)}
+          onSave={async (saveSettings) => {
+            setShowSaveModal(false); // Close the save dialog
+
+            const result = await saveReport(saveSettings);
+            console.log(result);
+          }}
         />
       ) : null}
 
@@ -167,6 +179,7 @@ const LabReport = () => {
           >
             Generate New Report
           </Button>
+          {/* TODO: Add info to settings box if this is a previously saved report, to allow updating of existing reports? */}
           <SettingsBox settings={settings} diseaseList={simlab.getAllDiseases()} />
           <Button
             variant="info"
@@ -177,7 +190,12 @@ const LabReport = () => {
             Change Report Settings
           </Button>
           <ButtonGroup vertical className="d-print-none mt-4 mb-4 w-100">
-            <Button variant="success" block disabled={!user?.userId} onClick={saveReport}>
+            <Button
+              variant="success"
+              block
+              disabled={!user?.userId}
+              onClick={() => setShowSaveModal(true)}
+            >
               Save Report
             </Button>
             <Button

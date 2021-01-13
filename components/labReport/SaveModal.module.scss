@@ -1,0 +1,8 @@
+@import '~nord/src/sass/nord.scss';
+
+.inputError {
+  background-color: lighten($nord11, 30%);
+  &:focus {
+    background-color: lighten($nord11, 10%);
+  }
+}

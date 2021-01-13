@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       await dbConnect();
 
-      const dbResult = await SavedReportDocumentModel.find({ userId }).exec();
+      const dbResult = await SavedReportDocumentModel.find({ userId }).sort({ updated_at: -1 }).exec();
 
       // Remove any documents that do not meet validation requirements.
       const filteredResults = (dbResult as SavedReportDocumentType[]).filter(
