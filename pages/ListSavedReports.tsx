@@ -10,6 +10,8 @@ import Badge from 'react-bootstrap/Badge';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 
+import Tag from '../components/Tag';
+
 import { UserContext } from '../contexts/userContext';
 import { SimlabContext } from '../contexts/simlabContext';
 
@@ -46,9 +48,7 @@ const ListSavedReports = () => {
                   </Card.Subtitle>
                   <div>
                     {report.tags.map((tag) => (
-                      <Badge key={tag} variant="primary">
-                        tag
-                      </Badge>
+                      <Tag key={tag} value={tag} />
                     ))}
                   </div>
                 </Card.Body>

@@ -1,0 +1,18 @@
+.badge {
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.closeIcon {
+  position: relative;
+  top: -1px;
+}
+
+.valueNoClose {
+  position: relative;
+  top: -1;
+}
+
+.valueWithClose {
+  top: 0;
+}
