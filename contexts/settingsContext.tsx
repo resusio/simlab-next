@@ -17,16 +17,16 @@ export interface SettingsContextType {
 
 export const defaultSettings = {
   patient: {
-    name: 'John Smith',
+    name: 'Annette Smith',
     mrn: '1234-567-890',
     age: 45,
     weight: 70,
     height: 170,
     gender: gender.Female,
   },
-  testIds: ['hstnt'],
-  orderSetIds: ['udip'],
-  diseaseIds: ['endo.dka'],
+  testIds: [],
+  orderSetIds: ['basic', 'udip'],
+  diseaseIds: [],
 };
 
 export const SettingsContext = createContext<SettingsContextType>({
