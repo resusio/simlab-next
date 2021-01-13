@@ -66,7 +66,7 @@ const ListSavedReports = () => {
                 <Card.Footer className="text-center">
                   <Link
                     href={{
-                      pathname: '/labReport/[reportId]',
+                      pathname: '/LabReport/[reportId]',
                       query: { reportId: report.id },
                     }}
                     passHref

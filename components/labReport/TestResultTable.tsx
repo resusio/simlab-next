@@ -8,7 +8,7 @@ import Table from 'react-bootstrap/Table';
 import { fullTestResultType } from '@resusio/simlab';
 
 import { SimlabContext } from '../../contexts/simlabContext';
-import TestResultRow from './testResultRow';
+import TestResultRow from './TestResultRow';
 
 import styles from './testResultTable.module.scss';
 

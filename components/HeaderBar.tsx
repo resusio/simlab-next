@@ -44,10 +44,10 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = ({
           <Link href="/" passHref>
             <Nav.Link>Home</Nav.Link>
           </Link>
-          <Link href="/labReport" passHref>
+          <Link href="/LabReport" passHref>
             <Nav.Link>Lab Report</Nav.Link>
           </Link>
-          <Link href="/roadmap" passHref>
+          <Link href="/Roadmap" passHref>
             <Nav.Link>Roadmap</Nav.Link>
           </Link>
         </Nav>

@@ -31,7 +31,7 @@ function FrontPage() {
             variant="primary"
             className="mr-2"
             onClick={(e) => {
-              router.push('labReport');
+              router.push('LabReport');
             }}
           >
             Start a Lab Report
@@ -41,7 +41,7 @@ function FrontPage() {
               variant="success"
               className="ml-2"
               onClick={(e) => {
-                router.push('listSavedReports');
+                router.push('ListSavedReports');
               }}
             >
               Load a Lab Report...

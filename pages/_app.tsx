@@ -12,7 +12,7 @@ import { UserProvider, UserContext } from '../contexts/userContext';
 import { SettingsProvider } from '../contexts/settingsContext';
 import { SimlabProvider } from '../contexts/simlabContext';
 
-import HeaderBar from '../components/headerBar';
+import HeaderBar from '../components/HeaderBar';
 
 const PageTemplate: FC = ({ children }) => {
   const { isAuthenticated, isLoading, login, logout, user } = useAuth();

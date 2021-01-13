@@ -9,9 +9,9 @@ import { UserContext } from '../../contexts/userContext';
 
 import { useSavedReport, saveNewReport } from '../../utils/apiHooks';
 
-import TestResultTable from '../../components/labReport/testResultTable';
-import SettingsModal from '../../components/labReport/settingsModal';
-import SettingsBox from '../../components/labReport/settingsBox';
+import TestResultTable from '../../components/labReport/TestResultTable';
+import SettingsModal from '../../components/labReport/SettingsModal';
+import SettingsBox from '../../components/labReport/SettingsBox';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -162,7 +162,7 @@ const LabReport = () => {
               const labResults = simlab.fetchLabReport();
               setResults(labResults);
 
-              router.push('/labReport');
+              router.push('/LabReport');
             }}
           >
             Generate New Report
@@ -185,7 +185,7 @@ const LabReport = () => {
               block
               disabled={!user?.userId}
               onClick={() => {
-                router.push('/listSavedReports');
+                router.push('/ListSavedReports');
               }}
             >
               Load Report

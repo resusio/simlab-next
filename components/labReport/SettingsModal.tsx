@@ -10,8 +10,8 @@ import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 
 import styles from './settingsModal.module.scss';
-import PatientSettings from './settingsModal/patientSettings';
-import ListSettings from './settingsModal/listSettings';
+import PatientSettings from './settingsModal/PatientSettings';
+import ListSettings from './settingsModal/ListSettings';
 
 import { gender, labTestType } from '@resusio/simlab';
 import { SimlabContext } from '../../contexts/simlabContext';
