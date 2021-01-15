@@ -34,7 +34,7 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = ({
   );
 
   return (
-    <Navbar bg="secondary" variant="dark" expand="lg" sticky="top">
+    <Navbar bg="secondary" variant="dark" expand="sm" sticky="top">
       <Navbar.Brand href="https://www.resuscitate.io">
         <img src="/logo.svg" style={{ height: '2rem', width: 'auto' }} />
       </Navbar.Brand>
