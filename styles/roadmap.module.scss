@@ -1,3 +1,17 @@
+@import '~nord/src/sass/nord.scss';
+
 .roadmapList {
   list-style-type: none;
+}
+
+.doneIcon {
+  color: $nord14;
+}
+
+.inProgressIcon {
+  color: darken($nord13, 5%);
+}
+
+.notStartedIcon {
+  color: $nord11;
 }

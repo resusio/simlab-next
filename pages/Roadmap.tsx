@@ -1,79 +1,92 @@
 import {
   CheckCircleFill as Done,
-  DashCircle as InProgress,
-  Circle as NotStarted,
+  DashCircleFill as InProgress,
+  CircleFill as NotStarted,
 } from 'react-bootstrap-icons';
+
+import PageHeader from '../components/PageHeader';
 
 import styles from '../styles/roadmap.module.scss';
 
 const RoadmapPage = () => {
+  const DoneIcon = () => <Done className={styles.doneIcon} />;
+  const InProgressIcon = () => <InProgress className={styles.inProgressIcon} />;
+  const NotStartedIcon = () => <NotStarted className={styles.notStartedIcon} />;
+
   return (
     <>
-      <h3>Feature Roadmap</h3>
+      <PageHeader title="Feature Roadmap" />
       <ul className={styles.roadmapList}>
         <li>
-          <Done /> Non-numeric lab results
+          <DoneIcon /> Non-numeric lab results
         </li>
         <li>
-          <Done /> Add capability for male/female, age/weight, etc.
+          <DoneIcon /> Add capability for male/female, age/weight, etc.
         </li>
         <li>
-          <Done /> Nicer unit fonts (e.g. proper superscripts)
+          <DoneIcon /> Nicer unit fonts (e.g. proper superscripts)
         </li>
         <li>
-          <Done /> Needs dependency or default for calculate values
+          <DoneIcon /> Needs dependency or default for calculate values
         </li>
         <li>
-          <Done /> Prevent some labs from having negative numbers
+          <DoneIcon /> Prevent some labs from having negative numbers
         </li>
         <li>
-          <Done /> Navigation
+          <DoneIcon /> Navigation
         </li>
         <li>
-          <Done /> Support order sets
+          <DoneIcon /> Support order sets
         </li>
         <li>
-          <Done /> Standard ordering for categories
+          <DoneIcon /> Standard ordering for categories
         </li>
         <li>
-          <Done /> Allow diseases to be selected that influences lab output
+          <DoneIcon /> Allow diseases to be selected that influences lab output
         </li>
         <li>
-          <Done /> Separate lab generator into separate package
+          <DoneIcon /> Separate lab generator into separate package
         </li>
         <li>
-          <Done /> Select labs, patient settings, disease process, etc.
+          <DoneIcon /> Select labs, patient settings, disease process, etc.
         </li>
         <li>
-          <Done /> Allow re-generation of lab results at the click of a button
+          <DoneIcon /> Allow re-generation of lab results at the click of a button
         </li>
         <li>
-          <Done /> Allow locking of values that have been edited so that they don't get regenerated
+          <DoneIcon /> Allow locking of values that have been edited so that they don't get
+          regenerated
         </li>
         <li>
-          <Done /> Prevent calculated values from being updated directly, instead update as
+          <DoneIcon /> Prevent calculated values from being updated directly, instead update as
           dependencies are changed
         </li>
         <li>
-          <InProgress /> Save sets of labs to user account
+          <DoneIcon /> Save sets of labs to user account
         </li>
         <li>
-          <InProgress /> ABG calculator (improve manner in which tests are modified by diseases)
+          <InProgressIcon /> Ability to type and filter saved lab reports
         </li>
         <li>
-          <NotStarted /> Persist settings/labs requested across page refresh
+          <InProgressIcon /> ABG calculator (improve manner in which tests are modified by diseases)
         </li>
         <li>
-          <NotStarted /> Add a help page
+          <NotStartedIcon /> Allow selection of different units for labs
         </li>
         <li>
-          <NotStarted /> Settings menu (e.g. long vs. short name, etc.)
+          <NotStartedIcon /> Persist settings/labs requested across page refresh
         </li>
         <li>
-          <NotStarted /> Export PDF, DOCX, XLSX
+          <NotStartedIcon /> Add a help page
         </li>
         <li>
-          <NotStarted /> Feedback/contact form
+          <NotStartedIcon /> Settings menu (e.g. long vs. short name, etc.)
+        </li>
+        <li>
+          <NotStartedIcon /> Export PDF, DOCX, XLSX
+        </li>
+        <li>
+          <NotStartedIcon /> Feedback/contact form
         </li>
       </ul>
     </>
