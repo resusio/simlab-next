@@ -19,6 +19,9 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
 
   const currentUser = isValidUser(user) ? user : null;
 
+  const logoutRedirectUrl =
+    (typeof window !== 'undefined' && window?.location?.origin) || undefined;
+
   const ProfilePicture = (
     <img style={{ height: '2rem' }} className="rounded-circle border" src={currentUser?.picture} />
   );
@@ -68,7 +71,9 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
               <NavDropdown.Item>My Lab Reports</NavDropdown.Item>
               <NavDropdown.Item>Preferences</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={() => logout()}>Logout</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => logout({ returnTo: logoutRedirectUrl })}>
+                Logout
+              </NavDropdown.Item>
             </NavDropdown>
           ) : (
             <Nav.Link onClick={() => loginWithPopup()}>Login</Nav.Link>
