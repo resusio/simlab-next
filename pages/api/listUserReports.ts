@@ -2,19 +2,23 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
-} from '../../../database/savedReport.mongoose';
-import { dbConnect } from '../../../database';
-import { ReportListType } from '../../../models/reportList.model';
+} from '../../database/savedReport.mongoose';
+import { dbConnect } from '../../database';
+import { ReportListType } from '../../models/reportList.model';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+import withUser, { RequestWithUser } from '../../utils/middleware/auth';
+
+const ListUserReports = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     // Fetch and validate provided report to save
-    if (req?.query?.userId && typeof req.query.userId === 'string') {
-      const userId = req.query.userId;
+    if (req.userId) {
+      const userId = req.userId;
 
       await dbConnect();
 
-      const dbResult = await SavedReportDocumentModel.find({ userId }).sort({ updated_at: -1 }).exec();
+      const dbResult = await SavedReportDocumentModel.find({ userId })
+        .sort({ updated_at: -1 })
+        .exec();
 
       // Remove any documents that do not meet validation requirements.
       const filteredResults = (dbResult as SavedReportDocumentType[]).filter(
@@ -47,3 +51,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: 'Not Found',
   });
 };
+
+export default withUser(ListUserReports, 'list:report');

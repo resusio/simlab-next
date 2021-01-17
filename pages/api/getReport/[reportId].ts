@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import mongoose from 'mongoose';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
@@ -6,10 +7,9 @@ import SavedReportDocumentModel, {
 import { SavedReportType } from '../../../models/savedReport.model';
 
 import { dbConnect } from '../../../database';
-import { ReportListType } from '../../../models/reportList.model';
-import mongoose from 'mongoose';
+import withUser, { RequestWithUser } from '../../../utils/middleware/auth';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const GetReport = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     // Fetch and validate provided report to save
     if (req?.query?.reportId && typeof req.query.reportId === 'string') {
@@ -31,13 +31,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         flattenMaps: true,
       });
 
+      // Check result: if not isPublic, and userid incorrect or not provided, fail 403
+      if (!formattedResult.isPublic && formattedResult.userId !== req.userId)
+        return res.status(403).json({ status: 403, message: 'Not Authorized' });
+
       return res.status(200).json(formattedResult);
     }
-  } else {
-    return res.status(400).json({
-      status: 400,
-      message: 'No report object provided in request body',
-    });
   }
 
   // Any methods other than POST
@@ -46,3 +45,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: 'Not Found',
   });
 };
+
+export default withUser(GetReport, 'read:report', false);

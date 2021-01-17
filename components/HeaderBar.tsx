@@ -2,35 +2,25 @@ import React, { FunctionComponent } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useAuth0 } from '@auth0/auth0-react';
 
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Spinner from 'react-bootstrap/Spinner';
 
-interface HeaderBarProps {
-  isLoggedIn?: boolean;
-  loginLoading?: boolean;
-  avatarPicture?: string;
-  username?: string;
-  email?: string;
-  loginClick?: () => void;
-  logoutClick?: () => void;
-}
+import { isValidUser } from '../utils/authTypes';
 
-const HeaderBar: FunctionComponent<HeaderBarProps> = ({
-  isLoggedIn,
-  loginLoading,
-  loginClick,
-  logoutClick,
-  avatarPicture,
-  username,
-  email,
-}: HeaderBarProps) => {
+interface HeaderBarProps {}
+
+const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
   const router = useRouter();
+  const { isAuthenticated, isLoading, user, logout, loginWithPopup } = useAuth0();
+
+  const currentUser = isValidUser(user) ? user : null;
 
   const ProfilePicture = (
-    <img style={{ height: '2rem' }} className="rounded-circle border" src={avatarPicture} />
+    <img style={{ height: '2rem' }} className="rounded-circle border" src={currentUser?.picture} />
   );
 
   return (
@@ -51,16 +41,26 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = ({
             <Nav.Link>Roadmap</Nav.Link>
           </Link>
         </Nav>
-        <Nav>
-          {loginLoading ? (
-            <Spinner animation="border" variant="primary" />
-          ) : isLoggedIn ? (
+        <Nav suppressHydrationWarning={true}>
+          {isLoading ? (
+            <NavDropdown
+              alignRight
+              title={
+                <Spinner
+                  animation="border"
+                  variant="primary"
+                  style={{ height: '1.8rem', width: '1.8rem' }}
+                />
+              }
+              id="basic-nav-dropdown"
+            />
+          ) : isAuthenticated ? (
             <NavDropdown alignRight title={ProfilePicture} id="basic-nav-dropdown">
               <NavDropdown.ItemText>
-                <div>{username}</div>
+                <div>{currentUser?.name}</div>
                 <div>
                   <em>
-                    <small>{email}</small>
+                    <small>{currentUser?.email}</small>
                   </em>
                 </div>
               </NavDropdown.ItemText>
@@ -68,23 +68,15 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = ({
               <NavDropdown.Item>My Lab Reports</NavDropdown.Item>
               <NavDropdown.Item>Preferences</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logoutClick}>Logout</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => logout()}>Logout</NavDropdown.Item>
             </NavDropdown>
           ) : (
-            <Nav.Link onClick={loginClick}>Login</Nav.Link>
+            <Nav.Link onClick={() => loginWithPopup()}>Login</Nav.Link>
           )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
-};
-
-HeaderBar.defaultProps = {
-  isLoggedIn: false,
-  loginLoading: false,
-  avatarPicture: '',
-  username: '',
-  email: '',
 };
 
 export default HeaderBar;

@@ -14,14 +14,18 @@
   "author": "Tristan Jones <jones.tristand@gmail.com> (https://www.tdjones.ca/)",
   "license": "MIT",
   "dependencies": {
+    "@auth0/auth0-react": "^1.2.0",
     "@resusio/simlab": "^1.4.2",
     "@resusio/simlab-set-basic": "^1.5.0",
     "ajv": "^7.0.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "fuse.js": "^6.4.6",
+    "jwks-rsa": "^1.12.2",
+    "jwt-promisify": "^1.1.1",
     "mongoose": "^5.11.11",
     "next": "^10.0.5",
+    "next-connect": "^0.9.1",
     "nord": "^0.2.1",
     "react": "17.0.1",
     "react-bootstrap": "1.4.0",
@@ -29,8 +33,7 @@
     "react-dom": "17.0.1",
     "sass": "^1.32.2",
     "swr": "^0.4.0",
-    "underscore": "^1.12.0",
-    "use-auth0-hooks": "^0.7.0"
+    "underscore": "^1.12.0"
   },
   "devDependencies": {
     "@types/mongoose": "^5.10.3",

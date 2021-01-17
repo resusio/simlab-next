@@ -13,7 +13,6 @@ import styles from './settingsModal.module.scss';
 import PatientSettings from './settingsModal/PatientSettings';
 import ListSettings from './settingsModal/ListSettings';
 
-import { gender, labTestType } from '@resusio/simlab';
 import { SimlabContext } from '../../contexts/simlabContext';
 import { SettingsContext, SettingsType } from '../../contexts/settingsContext';
 
@@ -23,7 +22,7 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: FC<SettingsModalProps> = ({ onCancel, onSave }) => {
-  const { settings, setSettings } = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
   const { simlab } = useContext(SimlabContext);
 
   const [ptInfo, setPtInfo] = useState(settings.patient);
@@ -108,16 +107,14 @@ const SettingsModal: FC<SettingsModalProps> = ({ onCancel, onSave }) => {
           </Button>
           <Button
             variant="primary"
-            onClick={() => {
-              const newSettings = {
+            onClick={() =>
+              onSave({
                 patient: ptInfo,
                 testIds: selectedTests,
                 orderSetIds: selectedOrderSets,
                 diseaseIds: selectedDiseases,
-              };
-              setSettings(newSettings);
-              onSave(newSettings);
-            }}
+              })
+            }
           >
             Save Changes
           </Button>

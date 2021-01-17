@@ -1,23 +1,29 @@
 import { useEffect, useState, useContext } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { useRouter } from 'next/router';
 import ErrorPage from 'next/error';
 import _ from 'underscore';
 
 import { SettingsContext } from '../../contexts/settingsContext';
 import { SimlabContext } from '../../contexts/simlabContext';
-import { UserContext } from '../../contexts/userContext';
 
-import { useSavedReport, saveNewReport } from '../../utils/apiHooks';
+import useSavedReport from '../../utils/api/useSavedReport';
+import { saveNewReport, saveUpdateReport } from '../../utils/api/saveReport';
 
+import PageHeader from '../../components/PageHeader';
+import PatientHeader from '../../components/labReport/PatientHeader';
 import TestResultTable from '../../components/labReport/TestResultTable';
 import SettingsModal from '../../components/labReport/SettingsModal';
 import SettingsBox from '../../components/labReport/SettingsBox';
 import SaveModal, { SaveSettingsType } from '../../components/labReport/SaveModal';
 
+import { asSimlabUser } from '../../utils/authTypes';
+
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Spinner from 'react-bootstrap/Spinner';
 import { Share } from 'react-bootstrap-icons';
 
 import { fullTestResultType } from '@resusio/simlab';
@@ -25,36 +31,49 @@ import { fullTestResultType } from '@resusio/simlab';
 import styles from '../../styles/labReport.module.scss';
 
 const LabReport = () => {
+  const router = useRouter();
+  const loadedReportId = router?.query?.reportId?.[0] ?? null;
+
+  const auth0 = useAuth0();
+  const currentUser = asSimlabUser(auth0.user);
+
   const [results, setResults] = useState<fullTestResultType>({
     categories: [],
     tests: {},
   });
-  const [showSettings, setShowSettings] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [loadedReportId, setLoadedReportId] = useState<string | null>(null);
+  const [showUpdateSaveModal, setShowUpdateSaveModal] = useState(false);
+  const [isSettingsUpdated, setIsSettingsUpdated] = useState(false);
 
-  const { user } = useContext(UserContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { simlab } = useContext(SimlabContext);
 
-  const router = useRouter();
-
   // Load the report from the API if requested.
-  const { loadedReport, isLoading, isError } = useSavedReport(loadedReportId);
+  const { loadedReport, loading, error } = useSavedReport(loadedReportId /*,
+    accessToken*/);
 
-  // Effect to load a lab report from the server, and if not then generate one.
+  // Flag indicating if there is currently a report loaded
+  const isReportLoaded = loadedReportId && loadedReport && !loading && !error;
+  // Flag indicating if the currently loaded report belongs to this user
+  const isMyReport = loadedReport?.userId === currentUser?.userId;
+
+  // Effect to import a loaded report, or generate a new report
   useEffect(() => {
-    // Validate route parameter
-    if (
-      router.query.reportId &&
-      Array.isArray(router.query.reportId) &&
-      router.query.reportId.length === 1 &&
-      typeof router.query.reportId[0] === 'string'
-    ) {
-      // Valid report Id passed.
-      setLoadedReportId(router.query.reportId[0]);
-    } else {
-      // No report Id, just generate a default lab set.
+    if (loadedReport) {
+      // Load data into simlab
+      simlab.deserializeReport(loadedReport);
+
+      setSettings({
+        patient: loadedReport.patient,
+        testIds: loadedReport.testIds,
+        orderSetIds: loadedReport.orderSetIds,
+        diseaseIds: loadedReport.diseaseIds,
+      }); // Load settings
+
+      // Fetch the results and load
+      setResults(simlab.fetchLabReport());
+    } else if (!loadedReport && !loading) {
       let labResults = simlab.fetchLabReport();
 
       // If simlab has no results in it, generate an initial set and display
@@ -65,34 +84,15 @@ const LabReport = () => {
 
       setResults(labResults);
     }
-  }, [router.query]);
-
-  // Effect to import a loaded report
-  useEffect(() => {
-    if (loadedReport) {
-      // not null
-      setSettings({
-        patient: loadedReport.patient,
-        testIds: loadedReport.testIds,
-        orderSetIds: loadedReport.orderSetIds,
-        diseaseIds: loadedReport.diseaseIds,
-      }); // Load settings
-
-      // Load data into simlab
-      simlab.deserializeReport(loadedReport);
-
-      // Fetch the results and load
-      setResults(simlab.fetchLabReport());
-    }
   }, [loadedReport]);
 
   // Save report handler
   const saveReport = async (saveSettings: SaveSettingsType) => {
-    if (user && user.userId) {
+    if (currentUser && currentUser.userId) {
       const serializedReport = simlab.serializeReport();
       const newReport = {
-        userId: user.userId,
-        authorName: `${user.firstName} ${user.lastName}`,
+        userId: currentUser.userId,
+        authorName: currentUser.fullName,
         isPublic: saveSettings.isPublic,
         reportName: saveSettings.reportName,
         tags: saveSettings.tags,
@@ -106,26 +106,67 @@ const LabReport = () => {
         },
       };
 
-      return await saveNewReport(newReport);
+      return await saveNewReport(newReport, auth0).catch(() => false); // return null if failed
     }
+
     return false; // Save failed as no user currently logged in (should not occur)
   };
 
-  // TODO: better formatting
-  if (loadedReportId && isLoading) {
-    return <div>Loading...</div>;
+  // Save report handler
+  const updateReport = async (updateSaveSettings: SaveSettingsType) => {
+    if (currentUser && currentUser.userId && loadedReportId && isMyReport) {
+      const serializedReport = simlab.serializeReport();
+      const newReport = {
+        userId: currentUser.userId,
+        authorName: currentUser.fullName,
+        isPublic: updateSaveSettings.isPublic,
+        reportName: updateSaveSettings.reportName,
+        tags: updateSaveSettings.tags,
+        ...serializedReport,
+
+        patient: {
+          // Add patient details that simlab package is not aware of
+          name: settings.patient.name,
+          mrn: settings.patient.mrn,
+          ...serializedReport.patient,
+        },
+      };
+
+      return await saveUpdateReport(loadedReportId, newReport, auth0).catch(() => false); // return null if failed
+    }
+
+    return false; // Save failed as no user currently logged in (should not occur)
+  };
+
+  if (loadedReportId && loading) {
+    return (
+      <>
+        <PageHeader title="Lab Report" />
+        <Row>
+          <Col xs={12}>
+            <Spinner animation="border" />
+          </Col>
+        </Row>
+      </>
+    );
   }
 
-  if (loadedReportId && isError) {
+  if (loadedReportId && error) {
     return <ErrorPage statusCode={404} />;
   }
 
   return (
     <>
-      {showSettings ? (
+      {showSettingsModal ? (
         <SettingsModal
-          onCancel={() => setShowSettings(false)}
-          onSave={(newSettings) => setShowSettings(false)}
+          onCancel={() => setShowSettingsModal(false)}
+          onSave={(newSettings) => {
+            if (!_.isMatch(settings, newSettings)) {
+              setIsSettingsUpdated(true);
+              setSettings(newSettings);
+            }
+            setShowSettingsModal(false);
+          }}
         />
       ) : null}
 
@@ -135,46 +176,63 @@ const LabReport = () => {
           onSave={async (saveSettings) => {
             setShowSaveModal(false); // Close the save dialog
 
-            const result = await saveReport(saveSettings);
-            console.log(result);
+            const newReportId = await saveReport(saveSettings);
+
+            if (newReportId)
+              router.push({
+                pathname: '/LabReport/[reportId]',
+                query: { reportId: newReportId },
+              });
+            else alert('Failed to save'); // TODO: give better feedback
           }}
         />
       ) : null}
 
+      {showUpdateSaveModal ? (
+        <SaveModal
+          onCancel={() => setShowUpdateSaveModal(false)}
+          onSave={async (saveSettings) => {
+            setShowUpdateSaveModal(false); // Close the save dialog
+
+            const updatedReportId = await updateReport(saveSettings);
+
+            if (updatedReportId)
+              router.push({
+                pathname: '/LabReport/[reportId]',
+                query: { reportId: updatedReportId },
+              });
+            else alert('Failed to update'); // TODO: give better feedback
+          }}
+          existingSettings={loadedReport ?? undefined}
+        />
+      ) : null}
+
+      <PageHeader title="Lab Report" />
+      {settings?.patient ? <PatientHeader {...settings.patient} /> : null}
       <Row>
-        <Col xs={12}>
-          <h3 className="d-print-none">Lab Report</h3>
-          <h5 className="d-print-none">
-            {settings?.patient.name}, MRN: {settings?.patient.mrn}
-          </h5>
-          <h3 className="d-none d-print-block">{settings?.patient.name}</h3>
-          <h5 className="d-none d-print-block mb-4">
-            <em>MRN: {settings?.patient.mrn}</em>
-          </h5>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={10} sm={8} md={6} lg={5} xl={4}>
+        <Col xs={12} sm={8} md={6} lg={5} xl={4}>
           <TestResultTable results={results} setResults={(newResults) => setResults(newResults)} />
         </Col>
         <Col
-          xs={{ span: 10, order: 'first' }}
+          xs={{ span: 12, order: 'first' }}
           sm={{ span: 4, order: 'last' }}
           md={3}
           lg={3}
           xl={2}
           className="d-print-none"
         >
-          {/* TODO: Highligh this button if settings have been updated and are out of sync with results */}
           <Button
             variant="danger"
+            className={isSettingsUpdated ? styles.pulsing : undefined}
             block
             onClick={() => {
               simlab.generateLabReport();
               const labResults = simlab.fetchLabReport();
               setResults(labResults);
 
-              router.push('/LabReport');
+              setIsSettingsUpdated(false); // Clear flag now that new results were generated
+
+              //router.push('/LabReport');
             }}
           >
             Generate New Report
@@ -185,31 +243,42 @@ const LabReport = () => {
             variant="info"
             block
             className={styles.settingsButton}
-            onClick={() => setShowSettings(!showSettings)}
+            onClick={() => setShowSettingsModal(!showSettingsModal)}
           >
             Change Report Settings
           </Button>
-          <ButtonGroup vertical className="d-print-none mt-4 mb-4 w-100">
+          <ButtonGroup vertical className="d-print-none mt-4 w-100">
             <Button
               variant="success"
               block
-              disabled={!user?.userId}
-              onClick={() => setShowSaveModal(true)}
+              disabled={!(isReportLoaded && isMyReport)}
+              onClick={() => setShowUpdateSaveModal(true)}
             >
-              Save Report
+              Update Saved Report
             </Button>
             <Button
               variant="success"
               block
-              disabled={!user?.userId}
+              disabled={!currentUser?.userId}
+              onClick={() => setShowSaveModal(true)}
+            >
+              Save Report As...
+            </Button>
+            <Button
+              variant="success"
+              className={styles.sepAbove}
+              block
+              disabled={!currentUser?.userId}
               onClick={() => {
                 router.push('/ListSavedReports');
               }}
             >
               Load Report
             </Button>
+          </ButtonGroup>
+          <ButtonGroup vertical className="d-print-none mt-4 mb-4 w-100">
             <Button
-              variant="success"
+              variant="primary"
               block
               onClick={() =>
                 setTimeout(function () {
@@ -219,10 +288,13 @@ const LabReport = () => {
             >
               <b>Print Report</b>
             </Button>
+            <Button variant="primary" block>
+              <span className="mr-3">
+                <Share />
+              </span>
+              <span>Share</span>
+            </Button>
           </ButtonGroup>
-          <Button variant="light" block disabled>
-            <Share />
-          </Button>
         </Col>
       </Row>
     </>

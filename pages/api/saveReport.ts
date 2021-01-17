@@ -1,11 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 
 import SavedReportDocumentModel from '../../database/savedReport.mongoose';
 import { dbConnect } from '../../database';
 
-//TODO: Persist db connections: https://developer.mongodb.com/how-to/nextjs-with-mongodb OR https://vercel.com/guides/deploying-a-mongodb-powered-api-with-node-and-vercel
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+import withUser, { RequestWithUser } from '../../utils/middleware/auth';
+
+const SaveReportHandler: NextApiHandler = async (
+  req: NextApiRequest & RequestWithUser,
+  res: NextApiResponse
+) => {
   if (req.method === 'POST') {
+    if (!req.userId) return res.status(403).json({ status: 403, message: 'Not Authorized' });
+
     // Fetch and validate provided report to save
     if (req.body && typeof req.body === 'object') {
       const reportToSave = new SavedReportDocumentModel(req.body);
@@ -13,6 +19,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (validationError)
         return res.status(400).json({ status: 400, message: validationError.message }); // Error in body json provided.
+
+      // Ensure that the userId submitting request is the same as listed in the save object
+      reportToSave.userId = req.userId;
 
       await dbConnect();
 
@@ -33,3 +42,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: 'Not Found',
   });
 };
+
+export default withUser(SaveReportHandler, 'save:report');

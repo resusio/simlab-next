@@ -1,67 +1,20 @@
-import { useContext, useEffect, FC, useState } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import Router, { useRouter } from 'next/router';
-import { Auth0Provider, useAuth } from 'use-auth0-hooks';
+import Router from 'next/router';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 import Container from 'react-bootstrap/Container';
 
 import '../styles/globals.scss';
 
-import { UserProvider, UserContext } from '../contexts/userContext';
 import { SettingsProvider } from '../contexts/settingsContext';
 import { SimlabProvider } from '../contexts/simlabContext';
 
 import HeaderBar from '../components/HeaderBar';
 
-const PageTemplate: FC = ({ children }) => {
-  const { isAuthenticated, isLoading, login, logout, user } = useAuth();
-  const { pathname, query } = useRouter();
-
-  const userCtx = useContext(UserContext);
-
-  useEffect(() => {
-    if (userCtx.setUser && user) {
-      userCtx.setUser({
-        userId: user.sub,
-        firstName: user.given_name,
-        lastName: user.family_name,
-        username: user.nickname,
-        email: user.email,
-        avatarPicture: user.picture,
-      });
-    }
-  }, [user]);
-
-  return (
-    <>
-      <HeaderBar
-        isLoggedIn={isAuthenticated}
-        loginLoading={isLoading}
-        avatarPicture={user?.picture}
-        username={user?.name}
-        email={user?.email}
-        loginClick={() => {
-          login({ appState: { returnTo: { pathname, query } } });
-        }}
-        logoutClick={() => {
-          logout({ returnTo: process.env.NEXT_PUBLIC_ROOT_URL ?? 'http://localhost:3000' });
-        }}
-      />
-      <Container fluid className="pt-2">
-        {children}
-      </Container>
-      {/*<div className="d-block d-sm-none">xs</div>
-      <div className="d-none d-sm-block d-md-none">sm</div>
-      <div className="d-none d-md-block d-lg-none">md</div>
-      <div className="d-none d-lg-block d-xl-none">lg</div>
-      <div className="d-none d-xl-block d-xxl-none">xl</div>
-      <div className="d-none d-xxl-block">xxl</div>*/}
-    </>
-  );
-};
-
 function MyApp({ Component, pageProps }: AppProps) {
+  const redirectUri = (typeof window !== 'undefined' && window?.location?.origin) || undefined;
+
   return (
     <>
       <Head>
@@ -80,25 +33,20 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Auth0Provider
         domain="resusio.us.auth0.com"
         clientId="iQSuKM0cu8NBtyaU50oqcH7eyPU3KBVE"
-        redirectUri={process.env.NEXT_PUBLIC_ROOT_URL ?? 'http://localhost:3000'}
+        redirectUri={redirectUri}
+        scope="save:report"
         onRedirectCallback={(appState) => {
-          if (appState?.returnTo) {
-            Router.push({
-              pathname: appState.returnTo.pathname,
-              query: appState.returnTo.query,
-            });
-          }
+          Router.replace(appState?.returnTo || '/');
         }}
       >
-        <UserProvider>
-          <SettingsProvider>
-            <SimlabProvider>
-              <PageTemplate>
-                <Component {...pageProps} />
-              </PageTemplate>
-            </SimlabProvider>
-          </SettingsProvider>
-        </UserProvider>
+        <SettingsProvider>
+          <SimlabProvider>
+            <HeaderBar />
+            <Container fluid className="pt-2">
+              <Component {...pageProps} />
+            </Container>
+          </SimlabProvider>
+        </SettingsProvider>
       </Auth0Provider>
     </>
   );

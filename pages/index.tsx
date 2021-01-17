@@ -1,18 +1,21 @@
-import React, { useContext, FunctionComponent, MouseEvent } from 'react';
-
-import { UserContext } from '../contexts/userContext';
+//import React, { useContext, FunctionComponent, MouseEvent } from 'react';
 
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import styles from '../styles/home.module.scss';
+import { useAuth0 } from '@auth0/auth0-react';
 
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Button from 'react-bootstrap/Button';
 
+import { asSimlabUser } from '../utils/authTypes';
+
+import styles from '../styles/home.module.scss';
+
 function FrontPage() {
-  const { user } = useContext(UserContext);
+  const { user } = useAuth0();
   const router = useRouter();
+
+  const currentUser = asSimlabUser(user);
 
   return (
     <>
@@ -36,7 +39,7 @@ function FrontPage() {
           >
             Start a Lab Report
           </Button>
-          {user?.userId ? (
+          {currentUser?.userId ? (
             <Button
               variant="success"
               className="ml-2"

@@ -18,15 +18,16 @@ export interface SaveSettingsType {
 interface SaveModalProps {
   onCancel: () => void;
   onSave: (newSaveSettings: SaveSettingsType) => void;
+  existingSettings?: SaveSettingsType;
 }
 
-const SaveModal: FC<SaveModalProps> = ({ onCancel, onSave }) => {
+const SaveModal: FC<SaveModalProps> = ({ onCancel, onSave, existingSettings }) => {
   const reportNameElement = useRef<HTMLInputElement | null>(null);
 
-  const [reportName, setReportName] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
+  const [reportName, setReportName] = useState(existingSettings?.reportName ?? '');
+  const [tags, setTags] = useState<string[]>(existingSettings?.tags ?? []);
   const [currTagText, setCurrTagText] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublic, setIsPublic] = useState(existingSettings?.isPublic ?? false);
 
   const [reportNameError, setReportNameError] = useState<string | false>(false);
   const [tagError, setTagError] = useState<string | false>(false);

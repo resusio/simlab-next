@@ -16,7 +16,13 @@ const Tag: FC<TagProps> = ({ onRemoveClicked, value, showClose = false }) => {
 
   return (
     <Badge pill variant="success" className={`${styles.badge} mr-1`}>
-      <span className={`mr-${showClose ? '2' : '0'} ${showClose ? styles.valueWithClose : styles.valueNoClose}`}>{value}</span>
+      <span
+        className={`mr-${showClose ? '2' : '0'} ${
+          showClose ? styles.valueWithClose : styles.valueNoClose
+        }`}
+      >
+        {value}
+      </span>
       {showClose ? (
         <span
           onMouseEnter={() => setMouseOver(true)}

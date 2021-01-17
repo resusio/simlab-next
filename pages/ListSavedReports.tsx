@@ -1,46 +1,53 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useAuth0 } from '@auth0/auth0-react';
 
-import { useReportList } from '../utils/apiHooks';
+import useReportList from '../utils/api/useReportList';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 
+import PageHeader from '../components/PageHeader';
 import Tag from '../components/Tag';
 
-import { UserContext } from '../contexts/userContext';
 import { SimlabContext } from '../contexts/simlabContext';
+import { asSimlabUser } from '../utils/authTypes';
 
 const ListSavedReports = () => {
-  const { user } = useContext(UserContext);
+  const auth0 = useAuth0();
+  const currentUser = asSimlabUser(auth0.user);
+
   const { simlab } = useContext(SimlabContext);
 
-  const { reportList, isLoading, isError } = useReportList(user?.userId);
+  // Fetch the report list with SWR
+  const { reportList, loading, error } = useReportList();
 
   // TODO: format these.
-  if (!user?.userId) return <div>Must be Logged In</div>;
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  if (!currentUser?.userId) return <div>Must be Logged In</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
 
   const diseaseMasterList = simlab.getAllDiseases();
 
   if (reportList)
     return (
       <>
-        <Row>
-          <Col xs={12}>
-            <h3 className="d-print-none mb-4">Saved Lab Reports</h3>
-          </Col>
-        </Row>
+        <PageHeader title="Saved Lab Reports" />
         <Row xs={1} sm={2} lg={3} xl={4}>
           {reportList.map((report) => (
             <Col key={report.id} className="mb-4">
               <Card className="h-100">
-                <Card.Header as="h5">{report.reportName}</Card.Header>
+                <Card.Header as="h5">
+                  {report.reportName}
+                  {report.isPublic ? (
+                    <small className="text-success d-block">Public</small>
+                  ) : (
+                    <small className="text-danger d-block">Private</small>
+                  )}
+                </Card.Header>
                 <Card.Body>
                   <Card.Title as="h6">{report.patient.name}</Card.Title>
                   <Card.Subtitle as="h6" className="mb-2 text-muted font-weight-light font-italic">
