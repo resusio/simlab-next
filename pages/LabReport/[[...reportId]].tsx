@@ -59,32 +59,35 @@ const LabReport = () => {
   const isMyReport = loadedReport?.userId === currentUser?.userId;
 
   // Effect to import a loaded report, or generate a new report
+  // TODO: not generating a default lab report on going to root LabReport page
   useEffect(() => {
-    if (loadedReport) {
-      // Load data into simlab
-      simlab.deserializeReport(loadedReport);
+    if (router.isReady) {
+      if (loadedReport) {
+        // Load data into simlab
+        simlab.deserializeReport(loadedReport);
 
-      setSettings({
-        patient: loadedReport.patient,
-        testIds: loadedReport.testIds,
-        orderSetIds: loadedReport.orderSetIds,
-        diseaseIds: loadedReport.diseaseIds,
-      }); // Load settings
+        setSettings({
+          patient: loadedReport.patient,
+          testIds: loadedReport.testIds,
+          orderSetIds: loadedReport.orderSetIds,
+          diseaseIds: loadedReport.diseaseIds,
+        }); // Load settings
 
-      // Fetch the results and load
-      setResults(simlab.fetchLabReport());
-    } else if (!loadedReport && !loading) {
-      let labResults = simlab.fetchLabReport();
+        // Fetch the results and load
+        setResults(simlab.fetchLabReport());
+      } else if (!loadedReportId && !(loadedReport || loading)) {
+        let labResults = simlab.fetchLabReport();
 
-      // If simlab has no results in it, generate an initial set and display
-      if (_.keys(labResults.tests).length === 0) {
-        simlab.generateLabReport();
-        labResults = simlab.fetchLabReport();
+        // If simlab has no results in it, generate an initial set and display
+        if (_.keys(labResults.tests).length === 0) {
+          simlab.generateLabReport();
+          labResults = simlab.fetchLabReport();
+        }
+
+        setResults(labResults);
       }
-
-      setResults(labResults);
     }
-  }, [loadedReport]);
+  }, [loadedReport, router.isReady, loadedReportId]);
 
   // Save report handler
   const saveReport = async (saveSettings: SaveSettingsType) => {
@@ -138,7 +141,7 @@ const LabReport = () => {
     return false; // Save failed as no user currently logged in (should not occur)
   };
 
-  if (loadedReportId && loading) {
+  if ((loadedReportId && loading) || !router.isReady) {
     return (
       <>
         <PageHeader title="Lab Report" />
@@ -238,7 +241,11 @@ const LabReport = () => {
             Generate New Report
           </Button>
           {/* TODO: Add info to settings box if this is a previously saved report, to allow updating of existing reports? */}
-          <SettingsBox settings={settings} diseaseList={simlab.getAllDiseases()} />
+          {loading ? (
+            <Spinner animation="border" />
+          ) : (
+            <SettingsBox settings={settings} diseaseList={simlab.getAllDiseases()} />
+          )}
           <Button
             variant="info"
             block

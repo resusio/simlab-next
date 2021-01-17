@@ -54,7 +54,7 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
       error: error?.toString() ?? false,
       loadedReport: SavedReportValidate(data) ? data : null,
     }));
-  }, [error, data]);
+  }, [error, data, reportId]);
 
   return _.omit(state, 'accessToken');
 };
