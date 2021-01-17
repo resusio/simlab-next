@@ -17,7 +17,7 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
 
   const [state, setState] = useState<SavedReportApiHookState>({
     error: false,
-    loading: true,
+    loading: Boolean(reportId),
     loadedReport: null,
     accessToken: null,
   });

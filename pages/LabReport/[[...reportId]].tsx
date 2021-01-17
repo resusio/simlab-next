@@ -50,8 +50,7 @@ const LabReport = () => {
   const { simlab } = useContext(SimlabContext);
 
   // Load the report from the API if requested.
-  const { loadedReport, loading, error } = useSavedReport(loadedReportId /*,
-    accessToken*/);
+  const { loadedReport, loading, error } = useSavedReport(loadedReportId);
 
   // Flag indicating if there is currently a report loaded
   const isReportLoaded = loadedReportId && loadedReport && !loading && !error;
@@ -59,7 +58,6 @@ const LabReport = () => {
   const isMyReport = loadedReport?.userId === currentUser?.userId;
 
   // Effect to import a loaded report, or generate a new report
-  // TODO: not generating a default lab report on going to root LabReport page
   useEffect(() => {
     if (router.isReady) {
       if (loadedReport) {
@@ -87,7 +85,7 @@ const LabReport = () => {
         setResults(labResults);
       }
     }
-  }, [loadedReport, router.isReady, loadedReportId]);
+  }, [loadedReport, router.isReady, loadedReportId, loading]);
 
   // Save report handler
   const saveReport = async (saveSettings: SaveSettingsType) => {
