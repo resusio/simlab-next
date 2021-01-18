@@ -1,10 +1,8 @@
-import { FC, useState } from 'react';
-import { labTestType } from '@resusio/simlab';
+import { FC, useMemo, useState } from 'react';
 
-import Fuse from 'fuse.js';
+import useFuse from '../../../utils/useFuse';
 
 import Form from 'react-bootstrap/Form';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -16,24 +14,15 @@ export interface ReportSettingsProps {
 
 const ListSettings: FC<ReportSettingsProps> = ({ masterList, selected, onChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const sortedMasterList = useMemo(
+    () => [...masterList].sort((a, b) => a.nomenclature.short.localeCompare(b.nomenclature.short)),
+    [masterList]
+  );
+  const fuse = useFuse(sortedMasterList, ['id', 'nomenclature.long', 'nomenclature.short']);
 
-  const fuse = new Fuse(masterList, {
-    includeScore: true,
-    shouldSort: true,
-    ignoreLocation: true,
-    threshold: 0.25,
-    keys: ['id', 'nomenclature.long', 'nomenclature.short'],
-  });
-
-  const results = fuse
-    .search<labTestType>(searchTerm)
-    .filter((item) => item.score && item.score <= 0.3);
-  const resultsWithDefault /*: Fuse.FuseResult<labTestType>[]*/ =
-    results.length > 0
-      ? results
-      : masterList
-          .sort((a, b) => a.nomenclature.short.localeCompare(b.nomenclature.short))
-          .map((test) => ({ item: test, refIndex: 0 })); // Reformat to the fuse result format so it can be rendered by the same code.
+  const results = fuse.search(searchTerm).filter((item) => item.score && item.score <= 0.3);
+  const resultsWithDefault =
+    results.length > 0 ? results : sortedMasterList.map((test, i) => ({ item: test, refIndex: i })); // Reformat to the fuse result format so it can be rendered by the same code.
 
   return (
     <Form>
@@ -91,7 +80,7 @@ const ListSettings: FC<ReportSettingsProps> = ({ masterList, selected, onChange 
               {selected.sort().map((id) => (
                 <li key={id}>
                   <em>
-                    {masterList.find((item) => item.id === id)?.nomenclature.long}
+                    {sortedMasterList.find((item) => item.id === id)?.nomenclature.long}
                     <br />
                   </em>
                 </li>

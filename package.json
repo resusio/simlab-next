@@ -25,7 +25,6 @@
     "jwt-promisify": "^1.1.1",
     "mongoose": "^5.11.11",
     "next": "^10.0.5",
-    "next-connect": "^0.9.1",
     "nord": "^0.2.1",
     "react": "17.0.1",
     "react-bootstrap": "1.4.0",

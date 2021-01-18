@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useAuth0 } from '@auth0/auth0-react';
-import Fuse from 'fuse.js';
+import useFuse from '../utils/useFuse';
 
 import useReportList from '../utils/api/useReportList';
 
@@ -30,38 +30,41 @@ const ListSavedReports = () => {
   // Fetch the report list with SWR
   const { reportList, loading, error } = useReportList();
 
+  const diseaseMasterList = useMemo(() => [...simlab.getAllDiseases()], [simlab]);
+  const reportListWithDiseaseNames = useMemo(
+    () =>
+      reportList?.map((report) => {
+        const updatedReport: ReportListItem & { diseaseNames: string[] } = {
+          ...report,
+          diseaseNames: report.diseaseIds.map(
+            (diseaseId) =>
+              diseaseMasterList.find((disease) => disease.id === diseaseId)?.nomenclature?.long ??
+              ''
+          ),
+        };
+
+        return updatedReport;
+      }),
+    [reportList, diseaseMasterList]
+  );
+  const fuse = useFuse(reportListWithDiseaseNames ?? [], [
+    'reportName',
+    'tags',
+    'diseaseNames',
+    'diseaseIds',
+    'patient.name',
+    'patient.mrn',
+  ]);
+
   // TODO: format these.
   if (!currentUser?.userId) return <div>Must be Logged In</div>;
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
-  const diseaseMasterList = simlab.getAllDiseases();
-
-  if (reportList) {
-    // Generate names for each disease
-    const reportListWithDiseaseNames = reportList.map((report) => {
-      const updatedReport: ReportListItem & { diseaseNames: string[] } = {
-        ...report,
-        diseaseNames: report.diseaseIds.map(
-          (diseaseId) =>
-            diseaseMasterList.find((disease) => disease.id === diseaseId)?.nomenclature?.long ?? ''
-        ),
-      };
-
-      return updatedReport;
-    });
-
-    const fuse = new Fuse(reportListWithDiseaseNames, {
-      includeScore: true,
-      shouldSort: true,
-      ignoreLocation: true,
-      threshold: 0.25,
-      keys: ['reportName', 'tags', 'diseaseNames', 'diseaseIds', 'patient.name', 'patient.mrn'],
-    });
-
+  if (reportListWithDiseaseNames) {
     const results = fuse.search(searchTerm).filter((item) => item.score && item.score <= 0.3);
     const resultsWithDefault =
-      results.length > 0
+      results && results?.length > 0
         ? results
         : reportListWithDiseaseNames.map((report) => ({ item: report, refIndex: 0 })); // Reformat to the fuse result format so it can be rendered by the same code.
 
