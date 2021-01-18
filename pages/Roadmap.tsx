@@ -65,7 +65,7 @@ const RoadmapPage = () => {
           <DoneIcon /> Save sets of labs to user account
         </li>
         <li>
-          <InProgressIcon /> Ability to type and filter saved lab reports
+          <DoneIcon /> Ability to type and filter saved lab reports
         </li>
         <li>
           <InProgressIcon /> ABG calculator (improve manner in which tests are modified by diseases)

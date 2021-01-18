@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth0 } from '@auth0/auth0-react';
+import Fuse from 'fuse.js';
 
 import useReportList from '../utils/api/useReportList';
 
@@ -9,16 +10,20 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Form from 'react-bootstrap/Form';
 
 import PageHeader from '../components/PageHeader';
 import Tag from '../components/Tag';
 
 import { SimlabContext } from '../contexts/simlabContext';
 import { asSimlabUser } from '../utils/authTypes';
+import type { ReportListItem } from '../models/reportList.model';
 
 const ListSavedReports = () => {
   const auth0 = useAuth0();
   const currentUser = asSimlabUser(auth0.user);
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { simlab } = useContext(SimlabContext);
 
@@ -32,40 +37,72 @@ const ListSavedReports = () => {
 
   const diseaseMasterList = simlab.getAllDiseases();
 
-  if (reportList)
+  if (reportList) {
+    // Generate names for each disease
+    const reportListWithDiseaseNames = reportList.map((report) => {
+      const updatedReport: ReportListItem & { diseaseNames: string[] } = {
+        ...report,
+        diseaseNames: report.diseaseIds.map(
+          (diseaseId) =>
+            diseaseMasterList.find((disease) => disease.id === diseaseId)?.nomenclature?.long ?? ''
+        ),
+      };
+
+      return updatedReport;
+    });
+
+    const fuse = new Fuse(reportListWithDiseaseNames, {
+      includeScore: true,
+      shouldSort: true,
+      ignoreLocation: true,
+      threshold: 0.25,
+      keys: ['reportName', 'tags', 'diseaseNames', 'diseaseIds', 'patient.name', 'patient.mrn'],
+    });
+
+    const results = fuse.search(searchTerm).filter((item) => item.score && item.score <= 0.3);
+    const resultsWithDefault =
+      results.length > 0
+        ? results
+        : reportListWithDiseaseNames.map((report) => ({ item: report, refIndex: 0 })); // Reformat to the fuse result format so it can be rendered by the same code.
+
     return (
       <>
         <PageHeader title="Saved Lab Reports" />
+        <Form.Control
+          type="text"
+          value={searchTerm}
+          placeholder="Search..."
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-2"
+        />
         <Row xs={1} sm={2} lg={3} xl={4}>
-          {reportList.map((report) => (
-            <Col key={report.id} className="mb-4">
+          {resultsWithDefault.map(({ item }) => (
+            <Col key={item.id} className="mb-4">
               <Card className="h-100">
                 <Card.Header as="h5">
-                  {report.reportName}
-                  {report.isPublic ? (
+                  {item.reportName}
+                  {item.isPublic ? (
                     <small className="text-success d-block">Public</small>
                   ) : (
                     <small className="text-danger d-block">Private</small>
                   )}
                 </Card.Header>
                 <Card.Body>
-                  <Card.Title as="h6">{report.patient.name}</Card.Title>
+                  <Card.Title as="h6">{item.patient.name}</Card.Title>
                   <Card.Subtitle as="h6" className="mb-2 text-muted font-weight-light font-italic">
-                    {report.patient.age} year old {report.patient.gender}
+                    {item.patient.age} year old {item.patient.gender}
                   </Card.Subtitle>
                   <div>
-                    {report.tags.map((tag) => (
+                    {item.tags.map((tag) => (
                       <Tag key={tag} value={tag} />
                     ))}
                   </div>
                 </Card.Body>
                 <ListGroup className="list-group-flush">
-                  {report.diseaseIds.map((diseaseId) => {
-                    const disease = diseaseMasterList.find((disease) => disease.id === diseaseId);
-
-                    return disease ? (
-                      <ListGroupItem className="py-1" key={diseaseId}>
-                        {disease.nomenclature.long}
+                  {item.diseaseNames.map((diseaseName, index) => {
+                    return diseaseName ? (
+                      <ListGroupItem className="py-1" key={item.diseaseIds[index]}>
+                        {diseaseName}
                       </ListGroupItem>
                     ) : null;
                   })}
@@ -74,7 +111,7 @@ const ListSavedReports = () => {
                   <Link
                     href={{
                       pathname: '/LabReport/[reportId]',
-                      query: { reportId: report.id },
+                      query: { reportId: item.id },
                     }}
                     passHref
                   >
@@ -87,6 +124,7 @@ const ListSavedReports = () => {
         </Row>
       </>
     );
+  }
 
   return <div>Loading...</div>;
 };

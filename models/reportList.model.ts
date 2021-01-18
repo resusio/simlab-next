@@ -1,7 +1,7 @@
 import { PatientInfoType, ajvPatientInfoTypeSchema } from './savedReport.model';
 import Ajv, { JSONSchemaType } from 'ajv';
 
-interface ReportListItem {
+export interface ReportListItem {
   id: string;
   userId: string;
   reportName: string;
