@@ -12,7 +12,7 @@ import { asSimlabUser } from '../utils/authTypes';
 import styles from '../styles/home.module.scss';
 
 function FrontPage() {
-  const { user } = useAuth0();
+  const { user, loginWithPopup } = useAuth0();
   const router = useRouter();
 
   const currentUser = asSimlabUser(user);
@@ -49,7 +49,11 @@ function FrontPage() {
             >
               Load a Lab Report...
             </Button>
-          ) : null}
+          ) : (
+            <Button variant="info" className="ml-2" onClick={() => loginWithPopup()}>
+              Sign In
+            </Button>
+          )}
         </p>
       </Jumbotron>
     </>

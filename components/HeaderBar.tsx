@@ -76,7 +76,7 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
               </NavDropdown.Item>
             </NavDropdown>
           ) : (
-            <Nav.Link onClick={() => loginWithPopup()}>Login</Nav.Link>
+            <Nav.Link onClick={() => loginWithPopup()}>Sign In</Nav.Link>
           )}
         </Nav>
       </Navbar.Collapse>

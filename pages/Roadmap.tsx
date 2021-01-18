@@ -68,6 +68,9 @@ const RoadmapPage = () => {
           <DoneIcon /> Ability to type and filter saved lab reports
         </li>
         <li>
+          <InProgressIcon /> Ability to delete lab reports
+        </li>
+        <li>
           <InProgressIcon /> ABG calculator (improve manner in which tests are modified by diseases)
         </li>
         <li>
