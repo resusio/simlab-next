@@ -68,7 +68,11 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
                 </div>
               </NavDropdown.ItemText>
               <NavDropdown.Divider />
-              <NavDropdown.Item>My Lab Reports</NavDropdown.Item>
+              <Link href="/ListSavedReports" passHref>
+                <NavDropdown.Item active={router.pathname === '/ListSavedReports'}>
+                  My Lab Reports
+                </NavDropdown.Item>
+              </Link>
               <NavDropdown.Item>Preferences</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={() => logout({ returnTo: logoutRedirectUrl })}>
