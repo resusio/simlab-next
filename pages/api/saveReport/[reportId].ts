@@ -14,7 +14,7 @@ const UpdateReportHandler: NextApiHandler = async (
   req: NextApiRequest & RequestWithUser,
   res: NextApiResponse
 ) => {
-  if (req.method === 'POST') {
+  if (req.method === 'PUT') {
     if (!req.userId) return res.status(403).json({ status: 403, message: 'Not Authorized' });
 
     if (req?.query?.reportId && typeof req.query.reportId === 'string') {
