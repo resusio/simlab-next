@@ -9,8 +9,9 @@ import type { ApiHookResult } from './';
 
 import { SavedReportType, SavedReportValidate } from '../../models/savedReport.model';
 
-export type SavedReportApiHookResult = ApiHookResult & { loadedReport: SavedReportType | null };
-type SavedReportApiHookState = SavedReportApiHookResult & { accessToken: string | null };
+export type SavedReportApiHook = ApiHookResult & { loadedReport: SavedReportType | null };
+type SavedReportApiHookState = SavedReportApiHook & { accessToken: string | null };
+export type SavedReportApiHookResult = SavedReportApiHook & { mutateCache: () => void };
 
 const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
   const auth0 = useAuth0();
@@ -29,11 +30,15 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
     Boolean(reportId); // Only sent request if reportId is present
 
   // Send request even if no access token: public reports can still be loaded
-  const { data, error } = useSwr(
+  const { data, error, mutate } = useSwr(
     shouldSendRequest ? [`/api/getReport/${reportId}`, state.accessToken] : null,
     fetcherWithToken,
     { shouldRetryOnError: false }
   );
+
+  const mutateCache = () => {
+    mutate();
+  };
 
   // Effect to respond to a change in user and generate an access token for the user.
   useEffect(() => {
@@ -56,7 +61,7 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
     }));
   }, [error, data, reportId]);
 
-  return _.omit(state, 'accessToken');
+  return _.omit({ ...state, mutateCache }, 'accessToken');
 };
 
 export default useSavedReport;

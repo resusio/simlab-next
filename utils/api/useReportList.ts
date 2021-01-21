@@ -9,8 +9,9 @@ import type { ApiHookResult } from './';
 
 import { ReportListType, ReportListValidate } from '../../models/reportList.model';
 
-export type ReportListApiHookResult = ApiHookResult & { reportList: ReportListType | null };
-type ReportListApiHookState = ReportListApiHookResult & { accessToken: string | null };
+export type ReportListApiHook = ApiHookResult & { reportList: ReportListType | null };
+type ReportListApiHookState = ReportListApiHook & { accessToken: string | null };
+export type ReportListApiHookResult = ReportListApiHook & { mutateCache: () => void };
 
 const useReportList = () => {
   const auth0 = useAuth0();
@@ -22,11 +23,15 @@ const useReportList = () => {
     accessToken: null,
   });
 
-  const { data, error } = useSwr(
+  const { data, error, mutate } = useSwr(
     state.accessToken ? [`/api/listUserReports`, state.accessToken] : null,
     fetcherWithToken,
     { shouldRetryOnError: false }
   );
+
+  const mutateCache = () => {
+    mutate();
+  };
 
   // Effect to respond to a change in user and generate an access token for the user.
   useEffect(() => {
@@ -49,7 +54,7 @@ const useReportList = () => {
     }));
   }, [error, data]);
 
-  return _.omit(state, 'accessToken');
+  return _.omit({ ...state, mutateCache }, 'accessToken');
 };
 
 export default useReportList;

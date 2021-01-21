@@ -4,6 +4,9 @@ import { useAuth0 } from '@auth0/auth0-react';
 import useFuse from '../utils/useFuse';
 
 import useReportList from '../utils/api/useReportList';
+import { deleteReport } from '../utils/api/deleteReport';
+
+import useConfirmation from '../utils/useConfirmation';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -11,6 +14,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Form from 'react-bootstrap/Form';
+import { Trash } from 'react-bootstrap-icons';
 
 import PageHeader from '../components/PageHeader';
 import Tag from '../components/Tag';
@@ -18,6 +22,8 @@ import Tag from '../components/Tag';
 import { SimlabContext } from '../contexts/simlabContext';
 import { asSimlabUser } from '../utils/authTypes';
 import type { ReportListItem } from '../models/reportList.model';
+import { stringify } from 'ajv';
+import { promises } from 'fs';
 
 const ListSavedReports = () => {
   const auth0 = useAuth0();
@@ -28,7 +34,10 @@ const ListSavedReports = () => {
   const { simlab } = useContext(SimlabContext);
 
   // Fetch the report list with SWR
-  const { reportList, loading, error } = useReportList();
+  const { reportList, loading, error, mutateCache } = useReportList();
+
+  // Hook for confirm delete dialog
+  const [openConfirmDelete, ConfirmDeleteDialog] = useConfirmation();
 
   const diseaseMasterList = useMemo(() => [...simlab.getAllDiseases()], [simlab]);
   const reportListWithDiseaseNames = useMemo(
@@ -71,6 +80,9 @@ const ListSavedReports = () => {
     return (
       <>
         <PageHeader title="Saved Lab Reports" />
+
+        <ConfirmDeleteDialog />
+
         <Form.Control
           type="text"
           value={searchTerm}
@@ -110,7 +122,7 @@ const ListSavedReports = () => {
                     ) : null;
                   })}
                 </ListGroup>
-                <Card.Footer className="text-center">
+                <Card.Footer>
                   <Link
                     href={{
                       pathname: '/LabReport/[reportId]',
@@ -120,6 +132,34 @@ const ListSavedReports = () => {
                   >
                     <Card.Link className="btn btn-primary">Load Report</Card.Link>
                   </Link>
+                  <Card.Link
+                    className="btn btn-danger"
+                    style={{ float: 'right' }}
+                    onClick={() =>
+                      openConfirmDelete({
+                        message: (
+                          <span>
+                            Are you sure that you want to delete <strong>{item.reportName}</strong>{' '}
+                            for patient{' '}
+                            <em>
+                              {item.patient.name} (MRN: {item.patient.mrn})
+                            </em>
+                            ?
+                          </span>
+                        ),
+                        doAction: async () => {
+                          const result = await deleteReport(item.id, auth0);
+                          if (result) {
+                            mutateCache(); // update swr list with deleted item.
+                            return true;
+                          } else
+                            return 'Sorry! We were unable to delete the lab report, please try again later.';
+                        },
+                      })
+                    }
+                  >
+                    <Trash />
+                  </Card.Link>
                 </Card.Footer>
               </Card>
             </Col>
