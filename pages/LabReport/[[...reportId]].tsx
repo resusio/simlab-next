@@ -7,8 +7,8 @@ import _ from 'underscore';
 import { SettingsContext } from '../../contexts/settingsContext';
 import { SimlabContext } from '../../contexts/simlabContext';
 
-import useSavedReport from '../../api/client/useSavedReport';
-import { saveNewReport, saveUpdateReport } from '../../api/client/saveReport';
+import useSavedReport from '../../api-lib/client/useSavedReport';
+import { saveNewReport, saveUpdateReport } from '../../api-lib/client/saveReport';
 import useAlertQueue from '../../utils/hooks/useAlertQueue';
 
 import PageHeader from '../../components/PageHeader';

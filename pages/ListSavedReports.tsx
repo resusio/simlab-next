@@ -4,8 +4,8 @@ import ErrorPage from 'next/error';
 import { useAuth0 } from '@auth0/auth0-react';
 import useFuse from '../utils/hooks/useFuse';
 
-import useReportList from '../api/client/useReportList';
-import { deleteReport } from '../api/client/deleteReport';
+import useReportList from '../api-lib/client/useReportList';
+import { deleteReport } from '../api-lib/client/deleteReport';
 
 import useConfirmation from '../utils/hooks/useConfirmation';
 

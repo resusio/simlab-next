@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 
-import withReportId from '../../../api/server/middleware/withReportId';
+import withReportId from '../../../api-lib/server/middleware/withReportId';
 
-import SaveNewReportHandler from '../../../api/server/handlers/SaveNewReportHandler';
-import GetReportListHandler from '../../../api/server/handlers/GetReportListHandler';
-import GetReportHandler from '../../../api/server/handlers/GetReportHandler';
-import UpdateReportHandler from '../../../api/server/handlers/UpdateReportHandler';
-import DeleteReportHandler from '../../../api/server/handlers/DeleteReportHandler';
+import SaveNewReportHandler from '../../../api-lib/server/handlers/SaveNewReportHandler';
+import GetReportListHandler from '../../../api-lib/server/handlers/GetReportListHandler';
+import GetReportHandler from '../../../api-lib/server/handlers/GetReportHandler';
+import UpdateReportHandler from '../../../api-lib/server/handlers/UpdateReportHandler';
+import DeleteReportHandler from '../../../api-lib/server/handlers/DeleteReportHandler';
 
 const ReportsHandler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
