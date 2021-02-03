@@ -3,17 +3,17 @@ import mongoose from 'mongoose';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
-} from '../../../database/savedReport.mongoose';
+} from '../database/savedReport.mongoose';
 import { SavedReportType } from '../../../models/savedReport.model';
+import { dbConnect } from '../database';
 
-import { dbConnect } from '../../../database';
-import withUser, { RequestWithUser } from '../../../utils/middleware/auth';
+import withUser, { RequestWithUser } from '../middleware/withUser';
 
 // TODO: All api should be under single endpoint, use different methods
 const GetReport = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     // Fetch and validate provided report to save
-    if (req?.query?.reportId && typeof req.query.reportId === 'string') {
+    if (req.query.reportId) {
       const reportId = req.query.reportId;
 
       await dbConnect();

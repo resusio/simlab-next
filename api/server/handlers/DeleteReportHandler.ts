@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
-} from '../../../database/savedReport.mongoose';
+} from '../database/savedReport.mongoose';
 import { SavedReportType } from '../../../models/savedReport.model';
-import { dbConnect } from '../../../database';
+import { dbConnect } from '../database';
 
-import withUser, { RequestWithUser } from '../../../utils/middleware/auth';
+import withUser, { RequestWithUser } from '../middleware/withUser';
 import _ from 'underscore';
 
 const DeleteReportHandler: NextApiHandler = async (
@@ -17,8 +17,7 @@ const DeleteReportHandler: NextApiHandler = async (
   if (req.method === 'DELETE') {
     if (!req.userId) return res.status(403).json({ status: 403, message: 'Not Authorized' });
 
-    if (req?.query?.reportId && typeof req.query.reportId === 'string') {
-      // Ensure reportId is provided
+    if (req.query.reportId) {
       const reportId = req.query.reportId;
 
       await dbConnect();

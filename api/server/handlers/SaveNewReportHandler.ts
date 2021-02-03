@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 
-import SavedReportDocumentModel from '../../database/savedReport.mongoose';
-import { dbConnect } from '../../database';
+import SavedReportDocumentModel from '../database/savedReport.mongoose';
+import { dbConnect } from '../database';
 
-import withUser, { RequestWithUser } from '../../utils/middleware/auth';
+import withUser, { RequestWithUser } from '../middleware/withUser';
 
 const SaveReportHandler: NextApiHandler = async (
   req: NextApiRequest & RequestWithUser,

@@ -10,7 +10,7 @@ export const deleteReport = async (deleteReportId: string, auth0: Auth0ContextIn
   const accessToken = await getAccessToken('delete:report', auth0);
 
   if (accessToken) {
-    const response = await axios.delete(`/api/deleteReport/${deleteReportId}`, {
+    const response = await axios.delete(`/api/reports/${deleteReportId}`, {
       timeout: 4000,
       headers: { Authorization: `Bearer ${accessToken}` },
     });

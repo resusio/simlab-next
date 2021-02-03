@@ -4,8 +4,8 @@ import useSwr from 'swr';
 
 import _ from 'underscore';
 
-import { fetcherWithToken, getAccessToken } from './';
-import type { ApiHookResult } from './';
+import { fetcherWithToken, getAccessToken } from '.';
+import type { ApiHookResult } from '.';
 
 import { ReportListType, ReportListValidate } from '../../models/reportList.model';
 
@@ -24,7 +24,7 @@ const useReportList = () => {
   });
 
   const { data, error, mutate } = useSwr(
-    state.accessToken ? [`/api/listUserReports`, state.accessToken] : null,
+    state.accessToken ? [`/api/reports`, state.accessToken] : null,
     fetcherWithToken,
     { shouldRetryOnError: false }
   );

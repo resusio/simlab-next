@@ -50,9 +50,11 @@ const useAlertQueue = (displayTime: number) => {
 
     setTimeout(() => {
       hiddenToVisible(id); // Start the fade in
-      setTimeout(() => { // Wait displayTime and fade in time, then start to hide
+      setTimeout(() => {
+        // Wait displayTime and fade in time, then start to hide
         visibleToHidden(id);
-        setTimeout(() => { // Remove from DOM after fadeout
+        setTimeout(() => {
+          // Remove from DOM after fadeout
           removeAlert(id);
         }, transitionTime); // Allow fadeout to complete, then remove from DOM
       }, displayTime + transitionTime); // Hold visible for displayTime ms, plus transitionTime ms for fade in time, then start fade out

@@ -1,9 +1,9 @@
 import jwt from 'jwt-promisify';
-import jwksClient from '../jwksClient';
+import jwksClient from './jwksClient';
 
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
 
-import { isAccessToken } from '../authTypes';
+import { isAccessToken } from '../../../utils/authTypes';
 
 export interface RequestWithUser {
   userId?: string;

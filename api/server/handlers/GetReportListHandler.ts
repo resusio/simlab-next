@@ -2,11 +2,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
-} from '../../database/savedReport.mongoose';
-import { dbConnect } from '../../database';
-import { ReportListType } from '../../models/reportList.model';
+} from '../database/savedReport.mongoose';
+import { dbConnect } from '../database';
+import { ReportListType } from '../../../models/reportList.model';
 
-import withUser, { RequestWithUser } from '../../utils/middleware/auth';
+import withUser, { RequestWithUser } from '../middleware/withUser';
 
 const ListUserReports = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {

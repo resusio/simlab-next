@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 import { patientInfoType, gender } from '@resusio/simlab';
-import { SavedReportType } from '../models/savedReport.model';
+import { SavedReportType } from '../../../models/savedReport.model';
 
 export type PatientInfoType = patientInfoType & { name: string; mrn: string };
 

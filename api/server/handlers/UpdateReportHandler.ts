@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 
 import SavedReportDocumentModel, {
   SavedReportDocumentType,
-} from '../../../database/savedReport.mongoose';
+} from '../database/savedReport.mongoose';
 import { SavedReportType } from '../../../models/savedReport.model';
-import { dbConnect } from '../../../database';
+import { dbConnect } from '../database';
 
-import withUser, { RequestWithUser } from '../../../utils/middleware/auth';
+import withUser, { RequestWithUser } from '../middleware/withUser';
 import _ from 'underscore';
 
 const UpdateReportHandler: NextApiHandler = async (
@@ -17,7 +17,7 @@ const UpdateReportHandler: NextApiHandler = async (
   if (req.method === 'PUT') {
     if (!req.userId) return res.status(403).json({ status: 403, message: 'Not Authorized' });
 
-    if (req?.query?.reportId && typeof req.query.reportId === 'string') {
+    if (req.query.reportId) {
       // Ensure reportId is provided
       const reportId = req.query.reportId;
 

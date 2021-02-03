@@ -4,8 +4,8 @@ import ErrorPage from 'next/error';
 import { useAuth0 } from '@auth0/auth0-react';
 import useFuse from '../utils/hooks/useFuse';
 
-import useReportList from '../utils/api/useReportList';
-import { deleteReport } from '../utils/api/deleteReport';
+import useReportList from '../api/client/useReportList';
+import { deleteReport } from '../api/client/deleteReport';
 
 import useConfirmation from '../utils/hooks/useConfirmation';
 
@@ -85,7 +85,7 @@ const ListSavedReports = () => {
       </>
     );
   }
-  
+
   if (reportListWithDiseaseNames) {
     const results = fuse.search(searchTerm).filter((item) => item.score && item.score <= 0.3);
     const resultsWithDefault =

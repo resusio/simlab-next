@@ -4,8 +4,8 @@ import useSwr from 'swr';
 
 import _ from 'underscore';
 
-import { fetcherWithToken, getAccessToken } from './';
-import type { ApiHookResult } from './';
+import { fetcherWithToken, getAccessToken } from '.';
+import type { ApiHookResult } from '.';
 
 import { SavedReportType, SavedReportValidate } from '../../models/savedReport.model';
 
@@ -31,7 +31,7 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
 
   // Send request even if no access token: public reports can still be loaded
   const { data, error, mutate } = useSwr(
-    shouldSendRequest ? [`/api/getReport/${reportId}`, state.accessToken] : null,
+    shouldSendRequest ? [`/api/reports/${reportId}`, state.accessToken] : null,
     fetcherWithToken,
     { shouldRetryOnError: false }
   );

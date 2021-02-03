@@ -7,8 +7,8 @@ import _ from 'underscore';
 import { SettingsContext } from '../../contexts/settingsContext';
 import { SimlabContext } from '../../contexts/simlabContext';
 
-import useSavedReport from '../../utils/api/useSavedReport';
-import { saveNewReport, saveUpdateReport } from '../../utils/api/saveReport';
+import useSavedReport from '../../api/client/useSavedReport';
+import { saveNewReport, saveUpdateReport } from '../../api/client/saveReport';
 import useAlertQueue from '../../utils/hooks/useAlertQueue';
 
 import PageHeader from '../../components/PageHeader';
@@ -46,7 +46,7 @@ const LabReport = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showUpdateSaveModal, setShowUpdateSaveModal] = useState(false);
   const [isSettingsUpdated, setIsSettingsUpdated] = useState(false);
-  const { pushAlert, AlertsList } = useAlertQueue(4000);
+  const { pushAlert, AlertsList } = useAlertQueue(4000); // TODO: allow error or success messages, then have save succeeded message
 
   const { settings, setSettings } = useContext(SettingsContext);
   const { simlab } = useContext(SimlabContext);
@@ -186,7 +186,10 @@ const LabReport = () => {
                 pathname: '/LabReport/[reportId]',
                 query: { reportId: newReportId },
               });
-            else pushAlert(`We were unable to save report '${saveSettings.reportName}', please try again later.`);
+            else
+              pushAlert(
+                `We were unable to save report '${saveSettings.reportName}', please try again later.`
+              );
           }}
         />
       ) : null}
@@ -204,7 +207,10 @@ const LabReport = () => {
                 pathname: '/LabReport/[reportId]',
                 query: { reportId: updatedReportId },
               });
-            else pushAlert(`We were unable to update report '${saveSettings.reportName}', please try again later.`);
+            else
+              pushAlert(
+                `We were unable to update report '${saveSettings.reportName}', please try again later.`
+              );
           }}
           existingSettings={loadedReport ?? undefined}
         />

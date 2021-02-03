@@ -13,7 +13,7 @@ export const saveNewReport = async (
   const accessToken = await getAccessToken('save:report', auth0);
 
   if (accessToken) {
-    const response = await axios.post('/api/saveReport', newReport, {
+    const response = await axios.post('/api/reports', newReport, {
       timeout: 4000,
       headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -31,7 +31,7 @@ export const saveUpdateReport = async (
   const accessToken = await getAccessToken('save:report', auth0);
 
   if (accessToken) {
-    const response = await axios.put(`/api/saveReport/${reportId}`, updatedReport, {
+    const response = await axios.put(`/api/reports/${reportId}`, updatedReport, {
       timeout: 4000,
       headers: { Authorization: `Bearer ${accessToken}` },
     });
