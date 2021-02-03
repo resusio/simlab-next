@@ -181,12 +181,20 @@ const LabReport = () => {
 
             const newReportId = await saveReport(saveSettings);
 
-            if (newReportId)
-              router.push({
-                pathname: '/LabReport/[reportId]',
-                query: { reportId: newReportId },
-              });
-            else
+            if (newReportId) {
+              router.push(
+                {
+                  pathname: '/LabReport/[reportId]',
+                  query: { reportId: newReportId },
+                },
+                undefined,
+                { shallow: true }
+              );
+              pushAlert(
+                `Your lab report has been saved as '${saveSettings.reportName}'!`,
+                'success'
+              );
+            } else
               pushAlert(
                 `We were unable to save report '${saveSettings.reportName}', please try again later.`
               );
@@ -202,12 +210,20 @@ const LabReport = () => {
 
             const updatedReportId = await updateReport(saveSettings);
 
-            if (updatedReportId)
-              router.push({
-                pathname: '/LabReport/[reportId]',
-                query: { reportId: updatedReportId },
-              });
-            else
+            if (updatedReportId) {
+              router.push(
+                {
+                  pathname: '/LabReport/[reportId]',
+                  query: { reportId: updatedReportId },
+                },
+                undefined,
+                { shallow: true }
+              );
+              pushAlert(
+                `Your lab report named '${saveSettings.reportName}' has been updated!`,
+                'success'
+              );
+            } else
               pushAlert(
                 `We were unable to update report '${saveSettings.reportName}', please try again later.`
               );

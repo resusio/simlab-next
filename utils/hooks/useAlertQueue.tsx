@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
 import Alert from 'react-bootstrap/Alert';
-import Fade from 'react-bootstrap/Fade';
 
 import styles from './useAlertQueue.module.scss';
 
 interface AlertMessage {
   id: string;
   message: string;
+  type: 'success' | 'failed';
   cssAnimClasses: string[];
 }
 
@@ -41,11 +41,11 @@ const useAlertQueue = (displayTime: number) => {
     );
   }
 
-  const pushAlert = (message: string) => {
+  const pushAlert = (message: string, type: 'success' | 'failed' = 'failed') => {
     const id = nanoid();
     setAlerts((currAlerts) => [
       ...currAlerts,
-      { id, message, cssAnimClasses: [styles.alert, styles.hidden] },
+      { id, message, type, cssAnimClasses: [styles.alert, styles.hidden] },
     ]);
 
     setTimeout(() => {
@@ -67,14 +67,14 @@ const useAlertQueue = (displayTime: number) => {
         <Alert
           key={alert.id}
           className={alert.cssAnimClasses.join(' ')}
-          variant="danger"
+          variant={alert.type === 'success' ? 'success' : 'danger'}
           dismissible
           onClick={() => {
             visibleToHidden(alert.id);
             setTimeout(() => removeAlert(alert.id), transitionTime);
           }}
         >
-          <Alert.Heading>😓 Oh, no!</Alert.Heading>
+          <Alert.Heading>{alert.type === 'success' ? '🎉 Success!' : '😓 Oh, no!'}</Alert.Heading>
           <p>{alert.message}</p>
         </Alert>
       ))}
