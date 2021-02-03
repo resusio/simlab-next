@@ -21,7 +21,7 @@ import Alert from 'react-bootstrap/Alert';
 
 interface ConfirmContext {
   message: JSX.Element | null;
-  doAction: (() => Promise<true | string>) | null;
+  doAction: (() => Promise<boolean>) | null;
   error?: string;
 }
 
@@ -73,7 +73,7 @@ const useConfirmation = (): [(context: ConfirmContext) => void, () => JSX.Elemen
             reduce<ConfirmContext, ErrorSendEvent>((ctx, evt) => ({ ...ctx, error: evt.error })) // Save error to context
           )
         ),
-        error: state(transition('acknowledge', 'reset')),
+        error: state(immediate('reset')), // For now just fall through error state. Could also have an acknowledge error function here by using this state.
         reset: state(
           // This state resets the state machine and context back to initial state.
           immediate(

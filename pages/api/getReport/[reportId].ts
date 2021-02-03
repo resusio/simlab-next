@@ -9,6 +9,7 @@ import { SavedReportType } from '../../../models/savedReport.model';
 import { dbConnect } from '../../../database';
 import withUser, { RequestWithUser } from '../../../utils/middleware/auth';
 
+// TODO: All api should be under single endpoint, use different methods
 const GetReport = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
   if (req.method === 'GET') {
     // Fetch and validate provided report to save

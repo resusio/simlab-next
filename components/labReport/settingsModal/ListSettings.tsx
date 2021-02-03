@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 
-import useFuse from '../../../utils/useFuse';
+import useFuse from '../../../utils/hooks/useFuse';
 
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';

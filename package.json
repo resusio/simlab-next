@@ -24,6 +24,7 @@
     "jwks-rsa": "^1.12.2",
     "jwt-promisify": "^1.1.2",
     "mongoose": "^5.11.13",
+    "nanoid": "^3.1.20",
     "next": "^10.0.5",
     "nord": "^0.2.1",
     "react": "17.0.1",

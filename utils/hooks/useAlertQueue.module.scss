@@ -1,0 +1,31 @@
+.alertQueue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 0.5rem;
+  z-index: 100000;
+}
+
+.alert {
+	opacity: 0;/*
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration:0.25s;*/
+}
+
+.visible {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.25s linear;
+}
+
+/*@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}*/

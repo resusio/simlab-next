@@ -9,6 +9,7 @@ import { SimlabContext } from '../../contexts/simlabContext';
 
 import useSavedReport from '../../utils/api/useSavedReport';
 import { saveNewReport, saveUpdateReport } from '../../utils/api/saveReport';
+import useAlertQueue from '../../utils/hooks/useAlertQueue';
 
 import PageHeader from '../../components/PageHeader';
 import PatientHeader from '../../components/labReport/PatientHeader';
@@ -45,6 +46,7 @@ const LabReport = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showUpdateSaveModal, setShowUpdateSaveModal] = useState(false);
   const [isSettingsUpdated, setIsSettingsUpdated] = useState(false);
+  const { pushAlert, AlertsList } = useAlertQueue(4000);
 
   const { settings, setSettings } = useContext(SettingsContext);
   const { simlab } = useContext(SimlabContext);
@@ -184,7 +186,7 @@ const LabReport = () => {
                 pathname: '/LabReport/[reportId]',
                 query: { reportId: newReportId },
               });
-            else alert('Failed to save'); // TODO: give better feedback
+            else pushAlert(`We were unable to save report '${saveSettings.reportName}', please try again later.`);
           }}
         />
       ) : null}
@@ -202,11 +204,13 @@ const LabReport = () => {
                 pathname: '/LabReport/[reportId]',
                 query: { reportId: updatedReportId },
               });
-            else alert('Failed to update'); // TODO: give better feedback
+            else pushAlert(`We were unable to update report '${saveSettings.reportName}', please try again later.`);
           }}
           existingSettings={loadedReport ?? undefined}
         />
       ) : null}
+
+      {AlertsList}
 
       <PageHeader title="Lab Report" />
       {settings?.patient ? <PatientHeader {...settings.patient} /> : null}

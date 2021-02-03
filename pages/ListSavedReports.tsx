@@ -1,12 +1,13 @@
 import { useContext, useMemo, useState } from 'react';
 import Link from 'next/link';
+import ErrorPage from 'next/error';
 import { useAuth0 } from '@auth0/auth0-react';
-import useFuse from '../utils/useFuse';
+import useFuse from '../utils/hooks/useFuse';
 
 import useReportList from '../utils/api/useReportList';
 import { deleteReport } from '../utils/api/deleteReport';
 
-import useConfirmation from '../utils/useConfirmation';
+import useConfirmation from '../utils/hooks/useConfirmation';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -14,6 +15,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Form from 'react-bootstrap/Form';
+import Spinner from 'react-bootstrap/Spinner';
 import { Trash } from 'react-bootstrap-icons';
 
 import PageHeader from '../components/PageHeader';
@@ -22,8 +24,7 @@ import Tag from '../components/Tag';
 import { SimlabContext } from '../contexts/simlabContext';
 import { asSimlabUser } from '../utils/authTypes';
 import type { ReportListItem } from '../models/reportList.model';
-import { stringify } from 'ajv';
-import { promises } from 'fs';
+import useAlertQueue from '../utils/hooks/useAlertQueue';
 
 const ListSavedReports = () => {
   const auth0 = useAuth0();
@@ -38,6 +39,9 @@ const ListSavedReports = () => {
 
   // Hook for confirm delete dialog
   const [openConfirmDelete, ConfirmDeleteDialog] = useConfirmation();
+
+  // Hook for alert queue
+  const { pushAlert, AlertsList } = useAlertQueue(4000);
 
   const diseaseMasterList = useMemo(() => [...simlab.getAllDiseases()], [simlab]);
   const reportListWithDiseaseNames = useMemo(
@@ -65,11 +69,23 @@ const ListSavedReports = () => {
     'patient.mrn',
   ]);
 
-  // TODO: format these.
-  if (!currentUser?.userId) return <div>Must be Logged In</div>;
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  if (error) {
+    return <ErrorPage statusCode={500} />;
+  }
 
+  if (auth0.isLoading || loading) {
+    return (
+      <>
+        <PageHeader title="Saved Lab Reports" />
+        <Row>
+          <Col xs={12}>
+            <Spinner animation="border" />
+          </Col>
+        </Row>
+      </>
+    );
+  }
+  
   if (reportListWithDiseaseNames) {
     const results = fuse.search(searchTerm).filter((item) => item.score && item.score <= 0.3);
     const resultsWithDefault =
@@ -82,6 +98,8 @@ const ListSavedReports = () => {
         <PageHeader title="Saved Lab Reports" />
 
         <ConfirmDeleteDialog />
+
+        {AlertsList}
 
         <Form.Control
           type="text"
@@ -152,8 +170,12 @@ const ListSavedReports = () => {
                           if (result) {
                             mutateCache(); // update swr list with deleted item.
                             return true;
-                          } else
-                            return 'Sorry! We were unable to delete the lab report, please try again later.';
+                          } else {
+                            pushAlert(
+                              `We were unable to delete the lab report named '${item.reportName}', please try again later.`
+                            );
+                            return false;
+                          }
                         },
                       })
                     }
