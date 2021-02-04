@@ -9,41 +9,37 @@ import { dbConnect } from '../database';
 
 import withUser, { RequestWithUser } from '../middleware/withUser';
 
-// TODO: All api should be under single endpoint, use different methods
 const GetReport = async (req: NextApiRequest & RequestWithUser, res: NextApiResponse) => {
-  if (req.method === 'GET') {
-    // Fetch and validate provided report to save
-    if (req.query.reportId) {
-      const reportId = req.query.reportId;
+  // Fetch and validate provided report to save
+  if (req.query.reportId) {
+    const reportId = req.query.reportId;
 
-      await dbConnect();
+    await dbConnect();
 
-      // Validate the objectId
-      if (!mongoose.isValidObjectId(reportId))
-        return res.status(404).json({ status: 404, message: 'Not Found' });
+    // Validate the objectId
+    if (!mongoose.isValidObjectId(reportId))
+      return res.status(404).json({ status: 404, message: 'Not Found' });
 
-      const dbResult = await SavedReportDocumentModel.findById(reportId).exec();
+    const dbResult = await SavedReportDocumentModel.findById(reportId).exec();
 
-      if (!dbResult || (dbResult as SavedReportDocumentType).validateSync())
-        return res.status(404).json({ status: 404, message: 'Not Found' });
+    if (!dbResult || (dbResult as SavedReportDocumentType).validateSync())
+      return res.status(404).json({ status: 404, message: 'Not Found' });
 
-      const formattedResult: SavedReportType = (dbResult as SavedReportDocumentType).toObject({
-        minimize: false,
-        flattenMaps: true,
-      });
+    const formattedResult: SavedReportType = (dbResult as SavedReportDocumentType).toObject({
+      minimize: false,
+      flattenMaps: true,
+    });
 
-      // Check result: if not isPublic, and userid incorrect or not provided, fail 403
-      if (!formattedResult.isPublic && formattedResult.userId !== req.userId)
-        return res.status(403).json({ status: 403, message: 'Not Authorized' });
+    // Check result: if not isPublic, and userid incorrect or not provided, fail 403
+    if (!formattedResult.isPublic && formattedResult.userId !== req.userId)
+      return res.status(403).json({ status: 403, message: 'Forbidden' });
 
-      return res.status(200).json(formattedResult);
-    }
+    return res.status(200).json(formattedResult);
   }
 
-  // Any methods other than POST
-  return res.status(404).json({
-    status: 404,
-    message: 'Not Found',
+  return res.status(400).json({
+    status: 400,
+    message: 'Missing report Id',
   });
 };
 

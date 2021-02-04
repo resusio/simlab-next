@@ -266,8 +266,6 @@ const LabReport = () => {
               setResults(labResults);
 
               setIsSettingsUpdated(false); // Clear flag now that new results were generated
-
-              //router.push('/LabReport');
             }}
           >
             Generate New Report
