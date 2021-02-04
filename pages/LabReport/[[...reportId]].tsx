@@ -46,13 +46,13 @@ const LabReport = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showUpdateSaveModal, setShowUpdateSaveModal] = useState(false);
   const [isSettingsUpdated, setIsSettingsUpdated] = useState(false);
-  const { pushAlert, AlertsList } = useAlertQueue(4000); // TODO: allow error or success messages, then have save succeeded message
+  const { pushAlert, AlertsList } = useAlertQueue(4000);
 
   const { settings, setSettings } = useContext(SettingsContext);
   const { simlab } = useContext(SimlabContext);
 
   // Load the report from the API if requested.
-  const { loadedReport, loading, error } = useSavedReport(loadedReportId);
+  const { loadedReport, loading, error, mutateReportLocal } = useSavedReport(loadedReportId);
 
   // Flag indicating if there is currently a report loaded
   const isReportLoaded = loadedReportId && loadedReport && !loading && !error;
@@ -238,7 +238,15 @@ const LabReport = () => {
       {settings?.patient ? <PatientHeader {...settings.patient} /> : null}
       <Row>
         <Col xs={12} sm={8} md={6} lg={5} xl={4}>
-          <TestResultTable results={results} setResults={(newResults) => setResults(newResults)} />
+          <TestResultTable
+            results={results}
+            setResults={(newResults) => {
+              setResults(newResults); // Set the local state results
+
+              // Mutate the SWR store with new results
+              mutateReportLocal(simlab.serializeReport());
+            }}
+          />
         </Col>
         <Col
           xs={{ span: 12, order: 'first' }}
@@ -264,7 +272,7 @@ const LabReport = () => {
           >
             Generate New Report
           </Button>
-          {/* TODO: Add info to settings box if this is a previously saved report, to allow updating of existing reports? */}
+
           {loading ? (
             <Spinner animation="border" />
           ) : (

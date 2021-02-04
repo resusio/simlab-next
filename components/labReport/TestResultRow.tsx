@@ -72,21 +72,26 @@ const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggle
         setValue(e.target.value);
         setIsValid(validateInput(e.target.value));
       }}
-      onKeyUp={(e: React.KeyboardEvent) => {
+      onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Escape') {
-          setIsOpen(false);
-          setValue(TestValueToString(testResult));
+          const valAsString = TestValueToString(testResult);
+          setValue(valAsString);
+          (e.target as HTMLInputElement).value = valAsString;
           (e.target as HTMLInputElement).blur();
         } else if (e.key === 'Enter') {
           if (isValid) {
-            const typedValue = isNumeric(value) ? Number.parseFloat(value.toString()) : value;
-
-            updateValue(typedValue);
             (e.target as HTMLInputElement).blur();
           }
         }
       }}
-      onBlur={() => setIsOpen(false)} // TODO: as it stands, if blur by clicking off, then updateValue is not called. if updateValue in blur, it updates when ypu press escape with the wrong value.
+      onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+        setIsOpen(false);
+
+        const typedValue = isNumeric(e.target.value)
+          ? Number.parseFloat(e.target.value.toString())
+          : e.target.value;
+        updateValue(typedValue);
+      }}
       className={`${styles.valueControl} ${!isValid ? styles.invalid : ''}`}
     />
   ) : (

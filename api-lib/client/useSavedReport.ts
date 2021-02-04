@@ -8,10 +8,11 @@ import { fetcherWithToken, getAccessToken } from '.';
 import type { ApiHookResult } from '.';
 
 import { SavedReportType, SavedReportValidate } from '../../models/savedReport.model';
+import { serializedReportType } from '@resusio/simlab';
 
 export type SavedReportApiHook = ApiHookResult & { loadedReport: SavedReportType | null };
 type SavedReportApiHookState = SavedReportApiHook & { accessToken: string | null };
-export type SavedReportApiHookResult = SavedReportApiHook & { mutateCache: () => void };
+export type SavedReportApiHookResult = SavedReportApiHook & { mutateCache: () => void, mutateReportLocal: (newReport: serializedReportType) => void };
 
 const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
   const auth0 = useAuth0();
@@ -33,12 +34,18 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
   const { data, error, mutate } = useSwr(
     shouldSendRequest ? [`/api/reports/${reportId}`, state.accessToken] : null,
     fetcherWithToken,
-    { shouldRetryOnError: false }
+    { shouldRetryOnError: false, revalidateOnReconnect: false, revalidateOnFocus: false }
   );
 
   const mutateCache = () => {
     mutate();
   };
+
+  const mutateReportLocal = (newReport: serializedReportType) => {
+    mutate(async (data: SavedReportType) => {
+      return { ...data, ...newReport };
+    }, false);
+  }
 
   // Effect to respond to a change in user and generate an access token for the user.
   useEffect(() => {
@@ -61,7 +68,7 @@ const useSavedReport = (reportId: string | null): SavedReportApiHookResult => {
     }));
   }, [error, data, reportId]);
 
-  return _.omit({ ...state, mutateCache }, 'accessToken');
+  return _.omit({ ...state, mutateCache, mutateReportLocal }, 'accessToken');
 };
 
 export default useSavedReport;
