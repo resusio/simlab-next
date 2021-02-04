@@ -1,7 +1,7 @@
 export interface Auth0User {
   email: string;
-  given_name: string;
-  family_name: string;
+  given_name?: string;
+  family_name?: string;
   nickname: string;
   name: string;
   picture: string;
@@ -21,8 +21,8 @@ export interface SimlabUser {
 export function isValidUser(user: any): user is Auth0User {
   return (
     typeof user?.email === 'string' &&
-    typeof user?.given_name === 'string' &&
-    typeof user?.family_name === 'string' &&
+    (typeof user?.given_name === 'string' || user?.given_name === undefined) &&
+    (typeof user?.family_name === 'string' || user?.given_name === undefined) &&
     typeof user?.nickname === 'string' &&
     typeof user?.name === 'string' &&
     typeof user?.picture === 'string' &&
@@ -34,12 +34,13 @@ export function asSimlabUser(user: any): SimlabUser | null {
   return isValidUser(user)
     ? {
         email: user.email,
-        firstName: user.given_name,
-        lastName: user.family_name,
         nickname: user.nickname,
         fullName: user.name,
         avatar: user.picture,
         userId: user.sub,
+
+        firstName: user.given_name ?? user.nickname,
+        lastName: user.family_name ?? '',
       }
     : null;
 }

@@ -71,6 +71,9 @@ const RoadmapPage = () => {
           <DoneIcon /> Ability to delete lab reports
         </li>
         <li>
+          <DoneIcon /> Feedback/contact form
+        </li>
+        <li>
           <InProgressIcon /> ABG calculator (improve manner in which tests are modified by diseases)
         </li>
         <li>
@@ -87,9 +90,6 @@ const RoadmapPage = () => {
         </li>
         <li>
           <NotStartedIcon /> Export PDF, DOCX, XLSX
-        </li>
-        <li>
-          <NotStartedIcon /> Feedback/contact form
         </li>
       </ul>
     </>

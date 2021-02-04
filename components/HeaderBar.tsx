@@ -9,7 +9,7 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Spinner from 'react-bootstrap/Spinner';
 
-import { isValidUser } from '../utils/authTypes';
+import { asSimlabUser, isValidUser } from '../utils/authTypes';
 
 interface HeaderBarProps {}
 
@@ -17,13 +17,13 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
   const router = useRouter();
   const { isAuthenticated, isLoading, user, logout, loginWithPopup } = useAuth0();
 
-  const currentUser = isValidUser(user) ? user : null;
+  const currentUser = asSimlabUser(user); //isValidUser(user) ? user : null;
 
   const logoutRedirectUrl =
     (typeof window !== 'undefined' && window?.location?.origin) || undefined;
 
   const ProfilePicture = (
-    <img style={{ height: '2rem' }} className="rounded-circle border" src={currentUser?.picture} />
+    <img style={{ height: '2rem' }} className="rounded-circle border" src={currentUser?.avatar} />
   );
 
   return (
@@ -39,6 +39,9 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
           </Link>
           <Link href="/LabReport" passHref>
             <Nav.Link>Lab Report</Nav.Link>
+          </Link>
+          <Link href="/Contact" passHref>
+            <Nav.Link>Contact</Nav.Link>
           </Link>
           <Link href="/Roadmap" passHref>
             <Nav.Link>Roadmap</Nav.Link>
@@ -60,7 +63,9 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
           ) : isAuthenticated ? (
             <NavDropdown alignRight title={ProfilePicture} id="basic-nav-dropdown">
               <NavDropdown.ItemText>
-                <div>{currentUser?.name}</div>
+                <div>
+                  {currentUser?.firstName} {currentUser?.lastName}
+                </div>
                 <div>
                   <em>
                     <small>{currentUser?.email}</small>
