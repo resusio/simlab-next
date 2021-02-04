@@ -8,24 +8,17 @@
 }
 
 .alert {
-  opacity: 1; /*
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration:0.25s;*/
+  opacity: 1;
 }
 
 .visible {
   visibility: visible;
   opacity: 1;
-  transition: opacity 2s linear;
+  transition: opacity 0.25s linear;
 }
 
-/*@keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}*/
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.25s, opacity 0.25s linear;
+}
