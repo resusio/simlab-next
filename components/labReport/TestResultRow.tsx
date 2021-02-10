@@ -85,12 +85,17 @@ const TestResultRow: FC<TestResultRowProps> = ({ testResult, updateValue, toggle
         }
       }}
       onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-        setIsOpen(false);
+        if (!isValid) {
+          e.preventDefault();
+          e.target.focus();
+        } else {
+          setIsOpen(false);
 
-        const typedValue = isNumeric(e.target.value)
-          ? Number.parseFloat(e.target.value.toString())
-          : e.target.value;
-        updateValue(typedValue);
+          const typedValue = isNumeric(e.target.value)
+            ? Number.parseFloat(e.target.value.toString())
+            : e.target.value;
+          updateValue(typedValue);
+        }
       }}
       className={`${styles.valueControl} ${!isValid ? styles.invalid : ''}`}
     />
