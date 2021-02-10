@@ -1,0 +1,10 @@
+.helpdocImage {
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .topicMenu {
+    border-right: 1px solid black;
+    padding-right: 0;
+  }
+}

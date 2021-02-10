@@ -40,6 +40,9 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
           <Link href="/LabReport" passHref>
             <Nav.Link>Lab Report</Nav.Link>
           </Link>
+          <Link href="/Help" passHref>
+            <Nav.Link>Help</Nav.Link>
+          </Link>
           <Link href="/Contact" passHref>
             <Nav.Link>Contact</Nav.Link>
           </Link>
