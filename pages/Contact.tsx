@@ -103,11 +103,15 @@ const ContactPage = () => {
           <Col xs={12}>
             <h4>⚠️ Sorry! something went wrong on our side ⚠️</h4>
             <h6>Please try again a bit later.</h6>
-            <Button onClick={() => {
-              setIsSending(false);
-              setSendSucceed(false);
-              setSendFailed(false);
-            }}>Back to feedback form</Button>
+            <Button
+              onClick={() => {
+                setIsSending(false);
+                setSendSucceed(false);
+                setSendFailed(false);
+              }}
+            >
+              Back to feedback form
+            </Button>
           </Col>
         </Row>
       </>

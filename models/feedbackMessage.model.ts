@@ -17,15 +17,11 @@ export const ajvFeedbackMessageSchema: JSONSchemaType<FeedbackMessageType> = {
     firstName: { type: 'string' },
     lastName: { type: 'string' },
     email: { type: 'string' },
-    message: { type: 'string' }
+    message: { type: 'string' },
   },
-  required: [
-    '_id',
-    'firstName',
-    'lastName',
-    'email',
-    'message'
-  ],
+  required: ['_id', 'firstName', 'lastName', 'email', 'message'],
 };
 
-export const FeedbackMessageValidate = new Ajv({ code: { es5: true } }).compile(ajvFeedbackMessageSchema);
+export const FeedbackMessageValidate = new Ajv({ code: { es5: true } }).compile(
+  ajvFeedbackMessageSchema
+);

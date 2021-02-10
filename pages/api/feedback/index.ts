@@ -24,7 +24,7 @@ const FeedbackHandler: NextApiHandler = async (
       messageToSave.userId = req.userId;
 
     const validationError = messageToSave.validateSync();
-    
+
     if (validationError)
       return res.status(400).json({ status: 400, message: validationError.message }); // Error in body json provided.
 
