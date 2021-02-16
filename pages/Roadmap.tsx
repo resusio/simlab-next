@@ -74,6 +74,9 @@ const RoadmapPage = () => {
           <DoneIcon /> Feedback/contact form
         </li>
         <li>
+          <DoneIcon /> Add a help page
+        </li>
+        <li>
           <InProgressIcon /> ABG calculator (improve manner in which tests are modified by diseases)
         </li>
         <li>
@@ -81,9 +84,6 @@ const RoadmapPage = () => {
         </li>
         <li>
           <NotStartedIcon /> Persist settings/labs requested across page refresh
-        </li>
-        <li>
-          <NotStartedIcon /> Add a help page
         </li>
         <li>
           <NotStartedIcon /> Settings menu (e.g. long vs. short name, etc.)
