@@ -17,6 +17,7 @@ import TestResultTable from '../../components/labReport/TestResultTable';
 import SettingsModal from '../../components/labReport/SettingsModal';
 import SettingsBox from '../../components/labReport/SettingsBox';
 import SaveModal, { SaveSettingsType } from '../../components/labReport/SaveModal';
+import ShareLinkBox from '../../components/labReport/ShareLinkBox';
 
 import { asSimlabUser } from '../../utils/authTypes';
 
@@ -25,6 +26,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Spinner from 'react-bootstrap/Spinner';
+import Collapse from 'react-bootstrap/Collapse';
 import { Share } from 'react-bootstrap-icons';
 
 import { fullTestResultType } from '@resusio/simlab';
@@ -46,6 +48,8 @@ const LabReport = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showUpdateSaveModal, setShowUpdateSaveModal] = useState(false);
   const [isSettingsUpdated, setIsSettingsUpdated] = useState(false);
+  const [showShareLink, setShowShareLink] = useState(false);
+
   const { pushAlert, AlertsList } = useAlertQueue(4000);
 
   const { settings, setSettings } = useContext(SettingsContext);
@@ -313,25 +317,40 @@ const LabReport = () => {
               Load Report
             </Button>
           </ButtonGroup>
-          <ButtonGroup vertical className="d-print-none mt-4 mb-4 w-100">
-            <Button
-              variant="primary"
-              block
-              onClick={() =>
-                setTimeout(function () {
-                  window.print();
-                }, 0)
-              }
-            >
-              <b>Print Report</b>
-            </Button>
-            <Button variant="primary" block>
-              <span className="mr-3">
-                <Share />
-              </span>
-              <span>Share</span>
-            </Button>
-          </ButtonGroup>
+          <div className="mb-4">
+            <ButtonGroup vertical className="d-print-none mt-4 w-100">
+              <Button
+                variant="primary"
+                block
+                onClick={() =>
+                  setTimeout(function () {
+                    window.print();
+                  }, 0)
+                }
+              >
+                <b>Print Report</b>
+              </Button>
+              <Button
+                variant="primary"
+                block
+                disabled={!isReportLoaded}
+                onClick={() => setShowShareLink((oldValue) => !oldValue)}
+                className={showShareLink ? styles.removeBottomRounded : ''}
+              >
+                <span className="mr-3">
+                  <Share />
+                </span>
+                <span>Share</span>
+              </Button>
+            </ButtonGroup>
+            <Collapse in={showShareLink} mountOnEnter unmountOnExit>
+              <div>
+                <ShareLinkBox
+                  link={`${window.location.protocol}//${window.location.host}/LabReport/${loadedReportId}`}
+                />
+              </div>
+            </Collapse>
+          </div>
         </Col>
       </Row>
     </>

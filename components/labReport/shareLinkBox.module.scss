@@ -1,0 +1,17 @@
+@import '~nord/src/sass/nord.scss';
+
+.shareLinkBox {
+  border: 2px solid $nord10;
+  border-top: 0;
+  width: 100%;
+  overflow-y: none;
+  overflow-x: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+
+  font-size: small;
+}
+
+.icon {
+  position: relative;
+  top: -3px;
+}

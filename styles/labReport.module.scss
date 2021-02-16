@@ -4,6 +4,11 @@
   border-radius: 0 0 0.25rem 0.25rem;
 }
 
+.removeBottomRounded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
 .sepAbove {
   border-top: 1px solid darken($nord14, 20%);
 }
