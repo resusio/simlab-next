@@ -81,7 +81,7 @@ const HeaderBar: FunctionComponent<HeaderBarProps> = () => {
                   My Lab Reports
                 </NavDropdown.Item>
               </Link>
-              <NavDropdown.Item>Preferences</NavDropdown.Item>
+              <NavDropdown.Item disabled>Preferences</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={() => logout({ returnTo: logoutRedirectUrl })}>
                 Logout
