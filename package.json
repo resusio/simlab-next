@@ -1,6 +1,6 @@
 {
   "name": "@resusio/simlab-next",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Next.js web application for Simlab.",
   "homepage": "https://github.com/resusio/simlab-next#readme",
   "private": false,
