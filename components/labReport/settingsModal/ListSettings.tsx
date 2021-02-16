@@ -49,7 +49,13 @@ const ListSettings: FC<ReportSettingsProps> = ({ masterList, selected, onChange 
                   id={`check-${result.item.id}`}
                   key={result.item.id}
                   type="checkbox"
-                  label={result.item.nomenclature.long}
+                  label={
+                    resultsWithDefault.filter(
+                      (testRes) => testRes.item.nomenclature.long === result.item.nomenclature.long
+                    ).length > 1
+                      ? `${result.item.nomenclature.long} [${result.item.id}]`
+                      : result.item.nomenclature.long
+                  }
                   custom
                   checked={selected.includes(result.item.id)}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
